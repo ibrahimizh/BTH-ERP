@@ -1,0 +1,16 @@
+D:\Projects\ERP.Models\bin\Debug\netcoreapp2.2\ERP.Models.deps.json
+D:\Projects\ERP.Models\bin\Debug\netcoreapp2.2\ERP.Models.dll
+D:\Projects\ERP.Models\bin\Debug\netcoreapp2.2\ERP.Models.pdb
+D:\Projects\ERP.Models\obj\Debug\netcoreapp2.2\ERP.Models.csproj.CoreCompileInputs.cache
+D:\Projects\ERP.Models\obj\Debug\netcoreapp2.2\ERP.Models.AssemblyInfoInputs.cache
+D:\Projects\ERP.Models\obj\Debug\netcoreapp2.2\ERP.Models.AssemblyInfo.cs
+D:\Projects\ERP.Models\obj\Debug\netcoreapp2.2\ERP.Models.dll
+D:\Projects\ERP.Models\obj\Debug\netcoreapp2.2\ERP.Models.pdb
+D:\Projects\BTH-ERP-Latest\ERP.Models\bin\Debug\netcoreapp2.2\ERP.Models.deps.json
+D:\Projects\BTH-ERP-Latest\ERP.Models\bin\Debug\netcoreapp2.2\ERP.Models.dll
+D:\Projects\BTH-ERP-Latest\ERP.Models\bin\Debug\netcoreapp2.2\ERP.Models.pdb
+D:\Projects\BTH-ERP-Latest\ERP.Models\obj\Debug\netcoreapp2.2\ERP.Models.AssemblyInfoInputs.cache
+D:\Projects\BTH-ERP-Latest\ERP.Models\obj\Debug\netcoreapp2.2\ERP.Models.AssemblyInfo.cs
+D:\Projects\BTH-ERP-Latest\ERP.Models\obj\Debug\netcoreapp2.2\ERP.Models.dll
+D:\Projects\BTH-ERP-Latest\ERP.Models\obj\Debug\netcoreapp2.2\ERP.Models.pdb
+D:\Projects\BTH-ERP-Latest\ERP.Models\obj\Debug\netcoreapp2.2\ERP.Models.csprojAssemblyReference.cache
