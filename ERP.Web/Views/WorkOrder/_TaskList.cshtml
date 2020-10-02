@@ -1,0 +1,74 @@
+@model IEnumerable<WorkOrderTaskView>
+
+<!-- <div class="card text-white bgDark mb-3 shadow-lg rounded">
+    
+    <div class="card-body bgWhite">
+        <div class="card-body bgWhite">
+            
+        </div>
+    </div>
+</div> -->
+
+    <div class="container-fluid" style="font-size: 14px !important;">
+        @if (Model.Count() > 0)
+        {
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>Overdue Days</th>
+                        <th>Id</th>
+                        <th>Item No</th>
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Employee</th>
+                        <th>Target Date</th>
+                        <th>Completed Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var task in Model)
+                    {
+                    <tr>
+                        <td class="bgOverdue-@task.IsOverdue bgInProgress-@(task.CompletedDate == null && task.IsOverdue == false)">
+                            @if (task.IsOverdue)
+                            {
+                                <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+                                @if (task.OverdueDays > 0)
+                                {<span>@task.OverdueDays</span>}
+                            }
+                            else
+                            {
+                                if (task.CompletedDate.HasValue)
+                                {
+                                    <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-hourglass-half" aria-hidden="true"></i>
+                                }
+                            }
+                        </td>
+                        <td><button type="button" class="btn btn-link btnViewTaskDetails" data-id="@task.Id"><img src="~/images/right-arrow.png" class="icon" />@task.Id</button></td>
+                        <td>@task.WorkOrderItemId</td>
+                        <td>@task.Item</td>
+                        <td>@task.Description</td>
+                        <td>@task.EmployeeName</td>
+                        <td>@task.TargetDate</td>
+                        <td>@task.CompletedDate</td>
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No Tasks Added</p>
+        }        
+    </div>
+
+
+            
+
+            

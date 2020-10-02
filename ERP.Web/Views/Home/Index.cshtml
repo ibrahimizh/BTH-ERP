@@ -1,0 +1,157 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@*<div class="album py-5 bg-light">
+            <div class="container">
+
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="card mb-4 box-shadow">
+                    <img class="card-img-top  tileImage" src="~/images/employees.jpg">
+                    <div class="card-body bg-success text-white">
+                      <h2>Employees</h2>
+
+                    </div>
+                    <div class="card-footer">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <a class="btn btn-sm btn-outline-secondary" asp-controller="Employee" asp-action="List">View</a>
+                          <a class="btn btn-sm btn-outline-secondary" asp-controller="Employee" asp-action="Create">Add</a>
+                        </div>
+                        <!-- <small class="text-muted">9 mins</small> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card mb-4 box-shadow">
+                    <img class="card-img-top tileImage" src="~/images/materials.jpg">
+                    <div class="card-body bg-success text-white">
+                      <h2>Materials</h2>
+
+                    </div>
+                    <div class="card-footer">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <a class="btn btn-sm btn-outline-secondary" asp-controller="Materials" asp-action="List">View</a>
+                          <a class="btn btn-sm btn-outline-secondary" asp-controller="Materials" asp-action="Create">Add</a>
+                        </div>
+                        <!-- <small class="text-muted">9 mins</small> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card mb-4 box-shadow">
+                    <img class="card-img-top  tileImage" src="~/images/suppliers.jpg">
+                    <div class="card-body bg-success text-white">
+                      <h2>Suppliers</h2>
+
+                    </div>
+                    <div class="card-footer">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <a class="btn btn-sm btn-outline-secondary" asp-controller="Suppliers" asp-action="List">View</a>
+                          <a class="btn btn-sm btn-outline-secondary" asp-controller="Suppliers" asp-action="Create">Add</a>
+                        </div>
+                        <!-- <small class="text-muted">9 mins</small> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="card mb-4 box-shadow">
+                    <img class="card-img-top  tileImage" src="~/images/orders.jpg">
+                    <div class="card-body bg-success text-white">
+                      <h2>Purchase Orders</h2>
+
+                    </div>
+                    <div class="card-footer">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <a class="btn btn-sm btn-outline-secondary" asp-controller="PurchaseOrder" asp-action="List">View</a>
+                          <a class="btn btn-sm btn-outline-secondary" asp-controller="PurchaseOrder" asp-action="Create">Add</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="card mb-4 box-shadow">
+                    <img class="card-img-top  tileImage" src="~/images/enquiries.jpg">
+                    <div class="card-body bg-success text-white">
+                      <h2>Enquiries</h2>
+                    </div>
+                    <div class="card-footer">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <a class="btn btn-sm btn-outline-secondary" asp-controller="Proposals" asp-action="List2">View</a>
+                          <a class="btn btn-sm btn-outline-secondary" asp-controller="Proposals" asp-action="Create">Add</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="card mb-4 box-shadow">
+                    <img class="card-img-top  tileImage" src="~/images/workorder.png">
+                    <div class="card-body bg-success text-white">
+                      <h2>Work Orders</h2>
+                    </div>
+                    <div class="card-footer">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <a class="btn btn-sm btn-outline-secondary" asp-controller="workorder" asp-action="List">View</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+    </div>*@
+
+<div id="taskReportData"></div>
+
+
+@section Scripts{
+    <script type="text/javascript">
+                $(document).ready(function () {
+                    
+                    bindTasks();
+                    function bindTasks() {
+                        let searchModel = {
+                            "EmployeeId":@User.Claims.Single(c => c.Type == "userid").Value
+                        };
+                        console.log("Emp Id" +JSON.stringify(searchModel));
+                        $.ajax({
+                                type: 'POST',
+                                url: '@Url.Action("GetFilteredTaskReport","WorkOrder")',
+                                data: JSON.stringify(searchModel),
+                                contentType: "application/json;"
+                            })
+                            .done(function (data) {
+                                console.log(JSON.stringify(data));
+                                    $("#taskReportData").html(data);
+                                });
+                    };
+
+                    
+                    //const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+
+                    //function reviver(key, value) {
+                    //  if (typeof value === "string" && dateFormat.test(value)) {
+                    //    return new Date(value);
+                    //  }
+
+                    //  return value;
+                    //}
+
+                });
+    </script>
+}

@@ -1,0 +1,145 @@
+﻿<form autocomplete="off">
+    <div class="card">
+        <div class="card-header"><h6 class="card-title">Supplier Payments Report</h6></div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">Filter</div>
+                        <div class="card-body bg-light">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td class="bg-light"><label>Paid On</label></td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class='input-group'>
+                                                            <input type='text' class="form-control datepicker" id="dtCreatedOn" />
+                                                            <span class="input-group-addon">
+                                                                <span class="glyphicon glyphicon-calendar"></span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bg-light"><label>Payments From</label></td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class='input-group'>
+                                                            <input type='text' class="form-control datepicker" id="dtCreatedFrom" />
+                                                            <span class="input-group-addon">
+                                                                <span class="glyphicon glyphicon-calendar"></span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bg-light"><label>Payments To</label></td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class='input-group'>
+                                                            <input type='text' class="form-control datepicker" id="dtCreatedTo" />
+                                                            <span class="input-group-addon">
+                                                                <span class="glyphicon glyphicon-calendar"></span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <input id="btnSearch" type="button" class="btn btn-success" value="Search" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <p>&nbsp;</p>
+            <div class="card">
+                <div class="card-header">Results</div>
+                <div class="card-body">
+                    <div class="row">
+                        <h5 class="text-danger"><span class="lblTotal card-title"></span></h5>
+                    </div>
+                    <div class="row">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="bg-light">
+                                    <th>Timestamp</th>
+                                    <th>PurchaseOrderId</th>
+                                    <th>SupplierName</th>
+                                    <th>PaymentType</th>
+                                    <th>InvoiceNo</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tbodyReport"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</form>
+
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#btnSearch').click(function () {
+                
+                let dtCreatedOn = $('#dtCreatedOn').val();
+                let dtCreatedFrom = $('#dtCreatedFrom').val();
+                let dtCreatedTo = $('#dtCreatedTo').val();
+
+                let searchModel = {
+                    "Date":dtCreatedOn,
+                    "DateFrom": dtCreatedFrom,
+                    "DateTo": dtCreatedTo
+                };
+                console.log("Search Model: " + JSON.stringify(searchModel));
+                $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("GetSupplierPaymentsReport")',
+                        data: JSON.stringify(searchModel),
+                        contentType: "application/json;"
+                    })
+                        .done(function (data) {
+                            console.log(JSON.stringify(data));
+                            $('.tbodyReport').html('');
+                            $('.lblTotal').text('');
+                            if (data.length === 0) {
+                                $('.lblTotal').text('No results!');
+                            } else {
+                                let total = 0;
+                                $.each(data, function (index, payment) {
+                                    $('.tbodyReport').append("<tr><td>" + payment.timestamp + "</td><td>" + payment.purchaseOrderId + "</td><td>" + payment.supplierName + "</td><td>" + payment.paymentType + "</td><td>" + payment.invoiceNo + "</td><td>" + payment.amount + "</td></tr>");
+                                    total = total + payment.amount;
+                                });
+                                $('.lblTotal').text("Total : " + total.toFixed(2));
+                            }
+                        });
+            });
+
+            const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+
+            function reviver(value) {
+              if (typeof value === "string" && dateFormat.test(value)) {
+                return new Date(value);
+              }
+              return value;
+            }
+
+        });
+    </script>
+}

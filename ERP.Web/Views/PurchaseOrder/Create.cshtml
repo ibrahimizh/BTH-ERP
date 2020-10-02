@@ -1,0 +1,88 @@
+@model DraftPurchaseOrderVM
+
+
+<form>
+    <div class="card card-default">
+        <div class="card-header">
+            <h2>Create Purchase Order</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    Select Supplier
+                </div>
+                <div class="col-md-6">
+                    @*<select asp-for="@Model.DraftOrder.SupplierId" asp-items="@Model.Suppliers" class="form-control"></select>*@
+                    <div class="form-group">
+                        <input id="autocomplete" class="form-control">
+                        <input id="selectedSupplier" type="hidden" />
+                        <input id="selectedSupplierName" type="hidden" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 text-danger">
+                    @ViewBag.Error
+                </div>
+            </div>
+            <div asp-validation-summary="All"></div>
+        </div>
+        <div class="card-footer">
+            <button type="button" id="submit" class="btn btn-success" >Submit</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var suppliersData = [];
+            bindsuppliersDropdown();
+
+            $("#autocomplete").autocomplete({
+                source: suppliersData,
+                select: function (event, ui) {
+                    $("#selectedSupplier").val(ui.item.id);
+                    $("#selectedSupplierName").val(ui.item.label);
+                    console.log(ui.item.id);
+                }
+
+            });
+
+            function bindsuppliersDropdown() {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetSuppliersDropdown","Suppliers")'
+                })
+                    .done(function (data) {
+                        $.each(data, function (index, value) {
+                            suppliersData.push({ "label": value.text, "id": value.value });
+
+                        });
+                        //console.log(JSON.stringify(data));
+                    });
+            }
+
+            $("#submit").click(function () {
+                let selectedSupplierId = $("#selectedSupplier").val();
+                
+                $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("Create","PurchaseOrder")'+'/'+selectedSupplierId,
+                            contentType: "application/json; charset=utf-8",
+                        })
+                        .done(function(data){
+                            // show the response
+                            let redirectUrl='@Url.Action("Draft","PurchaseOrder")'+'/'+data;
+                            window.location=redirectUrl;
+
+                        })
+                        .fail(function() {
+                            // just in case posting your form failed
+                            alert( "Error: Failed to create Purchase Order!" );
+
+                        });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,151 @@
+﻿
+@{
+    ViewData["Title"] = "Edit Customer Information";
+}
+
+<h2>Edit Customer Information</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditCompany">
+
+            <div class="form-group">
+                <label class="control-label">Search Customer Name</label>
+                <input id="autocomplete" class="form-control">
+                <input id="selectedCustomerId" type="hidden" />
+                <input id="selectedCustomerName" type="hidden" />
+                <br />
+                <input type="button" class="btn btn-primary btnSearch" value="Search" />
+            </div>
+
+            <div class="card cardEdit hide">
+                <div class="card-body">
+                    <h4 class="card-title">Edit</h4>
+                    <div class="form-group">
+                        <label class="control-label">Name</label>
+                        <input class="form-control name" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Phone Number</label>
+                        <input class="form-control phone" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Email</label>
+                        <input class="form-control email" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Address</label>
+                        <input class="form-control address" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">VAT Number</label>
+                        <input class="form-control vat" />
+                    </div>
+                    <div class="form-group">
+                        <input type="button" value="Save" class="btn btn-success btnSave" />
+                    </div>
+                </div>
+            </div>
+            <div class="alert alert-success hide alertSuccess">
+                <p class="text-success">Customer information updated!</p>
+            </div>
+            <div class="alert alert-danger hide alertError">
+                <p class="text-danger">Error updating Customer information!</p>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var customersData = [];
+            var selectedCustomerId = 0;
+            bindCustomersDropdown();
+
+            $("#autocomplete").autocomplete({
+                source: customersData,
+                select: function (event, ui) {
+                    $("#selectedCustomerId").val(ui.item.id);
+                    $("#selectedCustomerName").val(ui.item.label);
+                    selectedCustomerId = ui.item.id;
+                    console.log(ui.item.id);
+                }
+
+            });
+
+            $("#autocomplete").keyup(function () {
+                selectedCustomerId = 0;
+                $(".cardEdit").hide();
+            });
+
+            $(".btnSearch").click(function () {
+                if (selectedCustomerId > 0) {
+                    $(".cardEdit").show();
+                    getBusinessPartnerDetails(selectedCustomerId);
+                }
+            });
+
+            getBusinessPartnerDetails = function (id) {
+                
+                
+                $.ajax({
+                type: 'GET',
+                    url: '@Url.Action("GetBusinessPartnerById","Proposals")'+'/'+id
+                })
+                .done(function(data){
+                    // show the response
+                    if (data) {
+                        console.log(JSON.stringify(data));
+                        
+                        
+                        $('.name').val(data.name);
+                        $('.address').val(data.address);
+                        $('.email').val(data.emailId);
+                        $('.phone').val(data.mobileNo);
+                        $('.vat').val(data.vatNo);
+                        
+                    }
+                });
+            };
+
+            function bindCustomersDropdown() {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetCustomersDropdown","BusinessPartner")'
+                })
+                    .done(function (data) {
+                        $.each(data, function (index, value) {
+                            customersData.push({ "label": value.text, "id": value.value });
+
+                        });
+                        //console.log(JSON.stringify(data));
+                    });
+            }
+
+            $(".btnSave").click(function () {
+                let editCustomer = {
+                    id: selectedCustomerId,
+                    name: $(".name").val(),
+                    mobileNo: $(".phone").val(),
+                    emailId: $(".email").val(),
+                    address: $(".address").val(),
+                    vATNo:$(".vat").val(),
+                };
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("Update")',
+                    data: JSON.stringify(editCustomer),
+                    contentType: "application/json;"
+                })
+                    .done(function (data) {
+                        if (data) {                            
+                            $(".alertSuccess").fadeIn().delay(2000).fadeOut();
+                        }
+                    });
+            });
+        });
+    </script>
+}

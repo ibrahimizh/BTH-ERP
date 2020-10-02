@@ -1,0 +1,52 @@
+﻿@model ERP.Models.Materials
+
+
+
+<form asp-action="Update" asp-controller="Materials" method="POST">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2>Update Material</h2>
+        </div>
+        <div class="panel-body">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td> Product Code : </td>
+                        <td>@Html.TextBoxFor(m => m.Code, new { @class = "form-control", maxlength = "50" })</td>
+                        <td>
+                            @Html.ValidationMessageFor(m => m.Code, null, new { @class = "text-danger" })
+                        </td>
+
+                    </tr>
+
+                    <tr>
+                        <td> Product Name : </td>
+                        <td> @Html.TextBoxFor(m => m.Name, new { @class = "form-control", maxlength = "45" }) </td>
+                        <td>@Html.ValidationMessageFor(m => m.Name, null, new { @class = "text-danger" })</td>
+                    </tr>
+
+                    <tr>
+                        <td> Description  : </td>
+                        <td> @Html.TextAreaFor(m => m.Specification, new { @class = "form-control" })</td>
+                    </tr>
+
+                    <tr>
+                        <td> Shelf Number : </td>
+                        <td> @Html.TextBoxFor(m => m.ShelfNumber, new { @class = "form-control", maxlength = "45" }) </td>
+                        <td>@Html.ValidationMessageFor(m => m.ShelfNumber, null, new { @class = "text-danger" })</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2"> <input type="Submit" value="Save" class="btn btn-success">&nbsp;&nbsp;&nbsp;@Html.ActionLink("Cancel", "List2", "Materials", null, new { @class = "btn btn-primary" }) </td>
+                    </tr>
+                </tbody>
+
+            </table>
+            @if (!String.IsNullOrEmpty(ViewBag.Error))
+            {
+                <div class="alert alert-danger">@ViewBag.Error</div>
+            }
+        </div>
+    </div>
+
+</form>

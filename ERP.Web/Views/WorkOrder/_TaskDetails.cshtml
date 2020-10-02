@@ -1,0 +1,137 @@
+@model WorkOrderTaskView
+
+
+<div class="card shadow-lg p-3 mb-5 bgDefault rounded">
+    @*<div class="card-header">
+        <h2 class="card-title">@Model.Description</h2>
+    </div>*@
+    <div class="card-body" style="font-size:10px !important;">
+        <div class="row">
+            <div class="col-md-12">
+                <h6>Item No : @Model.WorkOrderItemId</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h6>Item : @Model.Item</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h6>Specification : @Model.Specification</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h6>Description : @Model.Description</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h6>Assigned to : @Model.EmployeeName</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h6>Target Date: @Model.TargetDate</h6>
+            </div>
+        </div>
+        <!-- <div class="row">
+        <div class="col-md-12">
+            <h6>Status</h6>
+            <select id="ddlTaskStatus" class="form-control" asp-items="Html.GetEnumSelectList<WorkOrderTaskStatus>()"
+                            asp-for="@Model.StatusId"></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h6>Progress (%)</h6>
+            <input id="txtTaskProgress" class="form-control" asp-for="@Model.Progress" />
+        </div>
+    </div> -->
+        @if (Model.CompletedDate == null)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <h6>Completed Date-Time</h6>
+                    <!-- <div class="form-group">
+                    <div class="input-group date datetimepicker" id="datetimepicker1" data-target-input="nearest">
+                        <input type="text" asp-for="@Model.CompletedDate" class="form-control datetimepicker datetimepicker-input txtTaskCompletedDate"  data-target="#datetimepicker1" />
+                        <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div> -->
+                    <div class="row text-danger">
+                        <div class="col-xs-2 textBox2ch"><h6>DD</h6></div><span>&nbsp;</span>
+                        <div class="col-xs-2 textBox2ch"><h6>MM</h6></div><span>&nbsp;</span>
+                        <div class="col-xs-2 textBox4ch"><h6>YYYY</h6></div>
+                        <span>&nbsp;</span>
+                        <span>&nbsp;</span>
+                        <span>&nbsp;</span>
+                        <div class="col-xs-2 textBox2ch"><h6>hh</h6></div><span>&nbsp;</span>
+                        <div class="col-xs-2 textBox2ch"><h6>mm</h6></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-2">
+                            <input type="number" id="DD" maxlength="2" min="1" max="31" class="form-control textBox2ch">
+                        </div>/
+                        <div class="col-xs-2">
+                            <input type="number" id="MM" maxlength="2" min="1" max="12" class="form-control textBox2ch">
+                        </div>/
+                        <div class="col-xs-2">
+                            <input type="number" id="YYYY" maxlength="4" min='@DateTime.Now.Year' max="@DateTime.Now.Year+1" class="form-control textBox4ch">
+                        </div>
+
+                        <span>&nbsp;</span>
+                        <div class="col-xs-2">
+                            <input type="number" id="hh" maxlength="2" min="0" max="24" class="form-control textBox2ch">
+                        </div>:
+                        <div class="col-xs-2">
+                            <input type="number" id="mm" maxlength="2" min="0" max="59" class="form-control textBox2ch">
+                        </div>
+                    </div>
+                    @*<div class="row">
+                        <div class="col-xs-12 text-success">
+                            <i>leave blank for current date/time</i>
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <h6>Completed Date: @Model.CompletedDate</h6>
+                </div>
+            </div>
+        }
+
+        <p>&nbsp;</p>
+        <div class="row">
+            <!-- @if(Model.Progress<100){
+        <div class="col-md-3">
+
+            <button id="btnUpdateTask" data-id="@Model.Id" type="button" class="btn btn-success">Save</button>
+
+        </div>
+        } -->
+            @if (Model.CompletedDate == null)
+            {
+                <div class="col-md-5">
+
+                    <button id="btnEndTask" data-id="@Model.Id" type="button" class="btn btn-success">Complete</button>
+
+                </div>
+            }
+            <div class="col-md-3">
+                <button id="btnCancelUpdateTask" type="button" class="btn btn-warning">Close</button>
+            </div>
+        </div>
+        <p>&nbsp;</p>
+        <div class="row">
+            <div id="alertTaskErrorMessage" class="alert alert-danger hide"></div>
+        </div>
+    </div>
+</div>

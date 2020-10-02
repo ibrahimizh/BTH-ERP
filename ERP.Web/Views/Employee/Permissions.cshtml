@@ -1,0 +1,109 @@
+﻿
+<div class="card mb-3 shadow-lg rounded">
+    <div class="card-header bg-info text-white">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="card-title">Employees - Permission Management</h4>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-4">
+                    <p>Click on an employee to view/update his permissions</p>
+                    <ul class="list-group employeesList">
+                    </ul>
+                </div>
+                <div class="col-lg-8">
+                    <h3 class="headingPermissionsForEmployee"></h3>
+                    <ul class="list-group employeePermissionsList">
+                    </ul>
+                    <p>&nbsp;</p>
+                    <div class="divUpdateEmployeePermissions">
+
+                    </div>
+                    <p>&nbsp;</p>
+                    <div class="updateSuccess hide">
+                        <div class="alert alert-success">Permissions updated !</div>
+                    </div>
+                    <div class="row updateError hide">
+                        <div class="alert alert-danger"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+    $(document).ready(function () {
+        getEmployees();
+
+        function getEmployees() {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetEmployees","Employee")'
+                })
+                    .done(function (data) {                        
+                    $.each(data, function (index, value) {
+                        console.log(JSON.stringify(value));
+                        $(".employeesList").append("<li class='list-group-item'><a class='employeeLink' href='#' data-employeeid='"+value.id+"' data-employeename='"+value.firstName + " " + value.lastName+"'>" + value.firstName + " " + value.lastName + "</a></li>");
+                    });
+                });
+        }
+
+        $(".employeesList").on("click", ".employeeLink", function () {
+            $(".employeesList>li.active").removeClass("active");
+            $(this).parent("li").addClass("active");
+            let selectedEmployeeId = $(this).data('employeeid');
+            let selectedEmployeeName = $(this).data('employeename');
+            $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetPermissions","Employee")' + '/' + selectedEmployeeId
+                })
+                .done(function (data) {
+                    $(".headingPermissionsForEmployee").html('Permissions for '+selectedEmployeeName);
+                    $(".employeePermissionsList").html('');
+                    $(".divUpdateEmployeePermissions").html('');
+                    $.each(data, function (index, value) {                        
+                        console.log(JSON.stringify(value));
+                        let checked = '';
+                        if (value.hasAccess) checked = 'checked';
+                        $(".employeePermissionsList").append("<li class='list-group-item'><div class='form-check'><label class='form-check-label'><input data-featureid="+value.featureId+" type='checkbox' class='form-check-input' value='' name='employeePermission' "+checked+">"+value.featureName+"</label></div></li>");
+                    });
+                    $(".divUpdateEmployeePermissions").append('<input type="button" class="btn btn-primary btnUpdatePermissions" data-employeeId="'+selectedEmployeeId+'" value="Update" />');
+                });
+        });
+
+        $(".divUpdateEmployeePermissions").on("click", ".btnUpdatePermissions", function () {
+            let selectedEmployeeId = $(this).data('employeeid');
+            var updatePermissionsModel = {
+                "employeeId": selectedEmployeeId,
+                "featureIds":[]                      
+            };
+            $.each($("input[name='employeePermission']:checked"), function () {
+                updatePermissionsModel.featureIds.push($(this).data('featureid'));
+            });
+            console.log(JSON.stringify(updatePermissionsModel));
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UpdatePermissions")',
+                data: JSON.stringify(updatePermissionsModel),
+                contentType: "application/json;"
+            })
+                .done(function (data) {
+                    // show the response
+                    if (data === "Success") {
+                        $(".updateSuccess").fadeIn().delay(2000).fadeOut();
+                    }
+                    else {
+                        $(".updateError").html(data).fadeIn().delay(2000).fadeOut();
+                    }
+
+                });
+        });
+    });
+    </script>
+}

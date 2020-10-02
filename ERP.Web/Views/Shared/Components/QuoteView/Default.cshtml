@@ -1,0 +1,75 @@
+﻿@model ERP.Models.Views.QuoteView
+
+    @*<div class="card">
+        <div class="card-body">
+            <table id="tableInvoice" class="table" style="width:100%;">
+                <thead class="bgDefault">
+                    <tr class="bg-info text-white">
+                        
+                        <th style="width: 25%;">
+                            <h6>المادة</h6><h6>ITEMS</h6>
+                        </th>
+                        <th style="width: 35%;">
+                            <h6>البيان</h6><h6>SPECIFICATION</h6>
+                        </th>
+                        <th style="width: 10%;">
+                            <h6>الكمية</h6><h6>QTY</h6>
+                        </th>
+                        <th style="width: 10%;">
+                            <h6>سعر الوحدة</h6><h6>UNIT PRICE</h6>
+                        </th>
+                        <th style="width: 10%;">
+                            <h6>السعر الإجمالي</h6><h6>PRICE</h6>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="tbodyInvoice">
+                    @foreach(var item in Model.Items)
+                    {
+                    <tr>
+                        
+                        <td style="width: 25%;">
+                            @item.Item
+                        </td>
+                        <td style="width: 35%;">
+                            @item.Specification
+                        </td>
+                        <td style="width: 10%;">
+                            @item.Quantity
+                        </td>
+                        <td style="width: 10%;">
+                            @item.UnitPrice
+                        </td>
+                        <td style="width: 10%;">
+                            @item.Quantity * @item.UnitPrice
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+                <tfoot class="bgGrayPale font-weight-bold">
+                    <tr>
+                        <td colspan="6">Item Total</td>
+                        <td>@Model.Items.Sum(i=>i.LineTotal)</td>
+                    </tr>
+                    <tr class="text-danger">
+                        <td colspan="6">VAT (5%)</td>
+                        <td>@Model.VAT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">Sub Total</td>
+                        <td>@Model.SubTotal</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">Discount</td>
+                        <td>@Model.Discount</td>
+                    </tr>
+
+                    <tr class="bgGreenPale">
+                        <td colspan="6">Total</td>
+                        <td>@Model.Total</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>*@
+<h2>TEST</h2>

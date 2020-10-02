@@ -1,0 +1,215 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Reports";
+}
+    @*<div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <a class="btn btn-info" asp-controller="WorkOrder" asp-action="Reports">WorkOrder Report</a>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-info" asp-controller="WorkOrder" asp-action="Reports">Expense Report</a>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-info" asp-controller="WorkOrder" asp-action="Reports">Income Report</a>
+            </div>
+        </div>
+    </div>*@
+<h1>Work Order - Reports</h1>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Filter by</th>
+                    <th>Equal to</th>
+                    <th>Greater than</th>
+                    <th>Less than</th>
+                </tr>
+            </thead>
+            <tbody>
+                @*<tr>
+                        <td><label>Work Order No</label></td>
+                        <td><input type="text" class="form-control" id="txtWorkOrderNo" /></td>
+                        <td colspan="2">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td><label>Title</label></td>
+                        <td><input type="text" class="form-control" id="txtTitle" /></td>
+                        <td colspan="2">&nbsp;</td>
+                    </tr>*@
+                <tr>
+                    <td><label>Customer Name</label></td>
+                    <td><input type="text" class="form-control" id="txtCustomerName" /></td>
+                    <td colspan="2">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td><label>Mobile</label></td>
+                    <td><input type="text" class="form-control" id="txtMobile" /></td>
+                    <td colspan="2">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td><label>Email</label></td>
+                    <td><input type="text" class="form-control" id="txtEmail" /></td>
+                    <td colspan="2">&nbsp;</td>
+                </tr>
+                @*<tr>
+                        <td><label>Address</label></td>
+                        <td><input type="text" class="form-control" id="txtAddress" /></td>
+                        <td colspan="2">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td><label>Status</label></td>
+                        <td><select class="form-control" id="ddlStatus"></select></td>
+                        <td colspan="2">&nbsp;</td>
+                    </tr>*@
+                <tr>
+                    <td><label>Created On</label></td>
+                    <td>
+                        <div class="form-group">
+                            <div class='input-group'>
+                                <input type='text' class="form-control datepicker" id="dtCreatedOn" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <div class='input-group'>
+                                <input type='text' class="form-control datepicker" id="dtCreatedFrom" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <div class='input-group'>
+                                <input type='text' class="form-control datepicker" id="dtCreatedTo" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="row">
+            <input id="btnSearch" type="button" class="btn btn-success" value="Search" />
+        </div>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>
+                Id
+            </th>
+            <th>
+                Title
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Contact Person
+            </th>
+            <th>
+                Mobile
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Address
+            </th>
+
+            <th>
+                Status
+            </th>
+            <th>
+                Created On
+            </th>
+            <th>
+                Target Date
+            </th>
+            <th>
+                Started On
+            </th>
+            <th>
+                Completed On
+            </th>
+            <th>
+                InvoicedAmount
+            </th>
+            <th>
+                PaidAmount
+            </th>
+            <th>
+                Discount
+            </th>
+            <th>
+                CustomerPONumber
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody class="tbodyReport">
+    </tbody>
+</table>
+
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#btnSearch').click(function () {
+                let customerName=$('#txtCustomerName').val();
+                let dtCreatedOn = $('#dtCreatedOn').val();
+                let dtCreatedFrom = $('#dtCreatedFrom').val();
+                let dtCreatedTo = $('#dtCreatedTo').val();
+                let email = $('#txtEmail').val();
+                let mobileNo = $('#txtMobile').val();
+
+                let searchModel = {
+                    "CustomerName":customerName,
+                    "CreatedOn":dtCreatedOn,
+                    "CreatedFrom": dtCreatedFrom,
+                    "CreatedTo": dtCreatedTo,
+                    "email": email,
+                    "mobileNo":mobileNo
+                };
+                $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("Reports")',
+                        data: JSON.stringify(searchModel),
+                        contentType: "application/json;"
+                    })
+                        .done(function (data) {
+                            console.log(JSON.stringify(data));
+                            $('.tbodyReport').html('');
+                            for (i = 0; i < data.length; i++) {
+                                let woUrl ='@Url.Action("Details","WorkOrder")?id=' + data[i].id;
+                                $('.tbodyReport').append("<tr><td><a href='"+ woUrl + "' class='btn bgDark'>"+data[i].id+"</a></td><td>" + data[i].title + "</td><td>" + data[i].name + "</td><td>" + data[i].pointofContact + "</td><td>" + data[i].mobileNo + "</td><td>" + data[i].emailId + "</td><td>" + data[i].address + "</td><td>" + data[i].statusId + "</td><td>" + data[i].timestamp + "</td><td>" + data[i].targetDate + "</td><td>" + data[i].startedDate + "</td><td>" + data[i].completedDate + "</td><td>" + data[i].invoicedAmount + "</td><td>" + data[i].paidAmount + "</td><td>" + data[i].discount + "</td><td>" + data[i].customerPONumber + "</td></tr>");
+                            }
+                        });
+            });
+
+            const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+
+            function reviver(key, value) {
+              if (typeof value === "string" && dateFormat.test(value)) {
+                return new Date(value);
+              }
+
+              return value;
+            }
+
+        });
+    </script>
+}

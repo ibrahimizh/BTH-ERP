@@ -1,0 +1,134 @@
+@model ERP.Web.ViewModels.AllPurchaseOrdersVM
+
+
+<h3>Purchase Orders</h3>
+<div class="row">
+    <div class="col-md-3">
+        <a href="/PurchaseOrder/Create" class="btn btn-lg btn-success">Create</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        &nbsp;
+    </div>
+</div>
+<div class="card">
+    <div class="card-header" style="background-color: #e9f9e9;color:#19314C;">
+        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="pills-draft-tab" data-toggle="pill" 
+                href="#pills-draft" role="tab" aria-controls="pills-draft" aria-selected="true">Draft</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-confirmed-tab" data-toggle="pill" 
+                href="#pills-confirmed" role="tab" aria-controls="pills-confirmed" aria-selected="false">Confirmed</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-received-tab" data-toggle="pill" 
+                href="#pills-received" role="tab" aria-controls="pills-received" aria-selected="false">Received</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" id="pills-draft" role="tabpanel" aria-labelledby="pills-draft-tab">
+      <div class="card card-default">
+        <div class="card-header">Draft</div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Supplier</th>
+                        <th>Created On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var draft in @Model.DraftOrders)
+                    {
+                        <tr>
+                            <td><a asp-area="" asp-controller="PurchaseOrder" asp-action="Draft" asp-route-id=@draft.Id>@draft.Id</a></td>
+                            <td>@draft.SupplierName</td>
+                            <td>@draft.CreatedDate</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="pills-confirmed" role="tabpanel" aria-labelledby="pills-confirmed-tab">
+      <div class="card card-default">
+        <div class="card-header">Confirmed</div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Supplier</th>
+                        <th>Ordered On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var confirm in @Model.ConfirmedOrders)
+                    {
+                        <tr>
+                            <td><a asp-area="" asp-controller="PurchaseOrder" asp-action="Confirmed" asp-route-id=@confirm.Id>@confirm.Id</a></td>
+                            <td>@confirm.SupplierName</td>
+                            <td>@confirm.OrderedDate</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+  </div>
+
+    <div class="tab-pane fade" id="pills-received" role="tabpanel" aria-labelledby="pills-received-tab">
+      <div class="card card-default">
+        <div class="card-header">Received</div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Supplier</th>
+                        <th>Invoice Number</th>
+                        <th>Received On</th>
+                        <th>Total Amount</th>
+                        <th>Paid Amount</th>
+                        <th>Balance Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var received in @Model.ReceivedOrders)
+                    {
+                    <tr>
+                        <td><a asp-area="" asp-controller="PurchaseOrder" asp-action="Received" asp-route-id=@received.Id>@received.Id</a></td>
+                        <td>@received.SupplierName</td>
+                        <td>@received.InvoiceNumber</td>
+                        <td>@received.ReceivedDate</td>
+                        <td>@received.TotalAmount</td>
+                        <td>@received.PaidAmount</td>
+                        <td>@(received.TotalAmount-received.PaidAmount)</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+

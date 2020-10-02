@@ -1,0 +1,57 @@
+@model ERP.Models.Suppliers
+
+
+
+<form asp-action="Create" asp-controller="Suppliers" method="POST">
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>Add Supplier</h2>
+    </div>
+    <div class="panel-body">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td> Enter the Company Name : </td>
+                    <td>@Html.TextBoxFor(m => m.Name, new { @class = "form-control", maxlength = "50" })</td>
+                    <td>
+                        @Html.ValidationMessageFor(m => m.Name, null, new { @class = "text-danger" })
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td> Enter the Point Of Contact : </td>
+                    <td> <input type="text" id="PointofContact" name="PointofContact" class="form-control" maxlength="30"> </td>
+                    <td>@Html.ValidationMessageFor(m => m.PointofContact, null, new { @class = "text-danger" })</td>
+                </tr>
+
+                <tr>
+                    <td> Mobile Number : </td>
+                    <td> <input type="text" id="MobileNo" name="MobileNo" class="form-control" maxlength="12"> </td>
+                </tr>
+
+                <tr>
+                    <td> Enter the Email Id: </td>
+                    <td> <input type="text" id="EmailId" name="EmailId" class="form-control" maxlength="40"> </td>
+                </tr>
+
+                <tr>
+                    <td> Enter the Address: </td>
+                    <td> <textarea id="Address" name="Address" class="form-control" maxlength="100"></textarea> </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2"> <input type="Submit" value="Save" class="btn btn-success"> </td>
+                </tr>
+            </tbody>
+
+        </table>
+        @if (!String.IsNullOrEmpty(ViewBag.Error))
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+    </div>
+</div>
+
+
+</form>

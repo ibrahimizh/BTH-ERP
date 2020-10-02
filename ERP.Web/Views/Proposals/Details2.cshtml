@@ -1,0 +1,653 @@
+﻿@model ERP.Models.Views.ProposalViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+<div class="modal" id="confirmModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Confirmation
+            </div>
+            <div class="modal-body">
+                Are you sure to update the quote?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success btnYes" data-dismiss="modal">Yes</button>
+                &nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-danger btnNo" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Modal Heading</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div id="printDemo">
+                    <div class="printWrapper">
+                        <div class="printContent">
+                            <img src="~/images/BTHInvoiceHeader.JPG" alt="BTH Header" class="fullWidth" />
+                            <h2 class="heading">QUOTATION</h2>
+                            <table class="floatRight">
+                                <tr><td class="lblInvoiceCustomerName">@Model.Name</td><td>&nbsp;</td><td> : </td><td>&nbsp;</td><td class="textRight"> اسم العميل / Customer Name  </td></tr>
+                                <tr><td class="lblInvoiceAddress">@Model.Address</td><td>&nbsp;</td><td> : </td><td>&nbsp;</td><td class="textRight">العنوان / Address</td></tr>
+                                <tr><td>@DateTime.Now.ToShortDateString()</td><td>&nbsp;</td><td> : </td><td>&nbsp;</td><td class="textRight">التاريخ  / Date</td></tr>
+                                <tr><td>@Model.Id-<span id="quoteRevisionNo">@Model.QuoteRevisionNo</span></td><td>&nbsp;</td><td> : </td><td>&nbsp;</td><td class="textRight">Quotation number</td></tr>
+                            </table>
+                            <div class="clear">&nbsp;</div>
+
+                            <table class="tableItems fullWidth">
+                                <thead>
+                                    <tr>
+
+                                        <th class="tableCell">
+                                            <table class="fullWidth">
+                                                <tr><td>الرقم</td></tr>
+                                                <tr><td>SR.&nbsp;#</td></tr>
+                                            </table>
+                                        </th>
+                                        <th class="tableCell">
+                                            <table class="fullWidth">
+                                                <tr><td>المادة</td></tr>
+                                                <tr><td>ITEMS</td></tr>
+                                            </table>
+                                        </th>
+                                        <th class="tableCell">
+                                            <table class="fullWidth">
+                                                <tr><td>البيان</td></tr>
+                                                <tr><td>SPECIFICATION</td></tr>
+                                            </table>
+                                        </th>
+                                        <th class="tableCell">
+                                            <table class="fullWidth">
+                                                <tr><td>الكمية</td></tr>
+                                                <tr><td>QTY</td></tr>
+                                            </table>
+                                        </th>
+                                        <th class="tableCell">
+                                            <table class="fullWidth">
+                                                <tr><td>سعر&nbsp;الوحدة</td></tr>
+                                                <tr><td>UNIT&nbsp;PRICE</td></tr>
+                                            </table>
+                                        </th>
+                                        <th class="tableCell">
+                                            <table class="fullWidth">
+                                                <tr><td>السعر&nbsp;الإجمالي</td></tr>
+                                                <tr><td>PRICE</td></tr>
+                                            </table>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="printInvoiceBody" class="printInvoiceBody"></tbody>
+                            </table>
+                            @*<p>&nbsp;</p>*@
+                            @*<table>
+                                    <tr><td>بث الخليجية للدعاية والإعلان</td></tr>
+                                    <tr><td>BTH AL-KHALEJEYAH ADV. AGENCY</td></tr>
+                                    <tr><td>VAT Reg. #:300458553900003</td></tr>
+                                </table>*@
+
+                        </div>
+                        <table class="fullWidth">
+                            <tbody>
+                                <tr>
+                                    <td class="textWhite">...................................</td>
+                                    <td class="textWhite">...................................</td>
+                                    <td>Sales</td>
+                                    <td class="textWhite">...................</td>
+                                    <td>Received By</td>
+                                </tr>
+                                <tr>
+                                    <td class="textWhite">....................................</td>
+                                    <td class="textWhite">....................................</td>
+                                    <td>__________________</td>
+                                    <td class="textWhite">...................</td>
+                                    <td>__________________</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <img src="~/images/BTHInvoiceFooter.JPG" alt="BTH Footer" class="fullWidth" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<h1>Quotation Details</h1>
+
+
+
+
+
+<div id="divQuoteDetails" class="container-fluid">
+    <div class="row">
+        <div>
+
+            <a asp-action="List2">Back to List</a>
+        </div>
+
+    </div>
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Id)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Timestamp)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ContactMode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.WorkOrderId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PointofContact)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.MobileNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.EmailId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Address)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.BusinessPartnerTypeId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ContactName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ContactEmail)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ContactPhone)
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(model => model.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.Timestamp)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.ContactMode)
+                    </td>
+                    <td>
+                        @if (Model.WorkOrderId.HasValue)
+                        {
+                            @Html.ActionLink(@Model.WorkOrderId.Value.ToString(), "Details", "WorkOrder", new { id = @Model.WorkOrderId.Value })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Create", "Create", "WorkOrder", new { id = @Model.Id })
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.PointofContact)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MobileNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.EmailId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.Address)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.BusinessPartnerTypeId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.ContactName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.ContactEmail)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.ContactPhone)
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+    @if (!String.IsNullOrEmpty(Model.Description))
+    {
+        <div class="row">
+
+            <div class="card">
+                <div class="card-header">Description</div>
+                <div class="card-body">@Model.Description</div>
+
+            </div>
+        </div>
+    }
+
+    @if (String.IsNullOrEmpty(Model.Description))
+    {
+        <div class="row">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label>Quote No : </label><label id="lblQuoteRevisionNo">@Model.QuoteRevisionNo</label>
+                        </div>
+                        <div class="col-md-2">
+                            <button id="btnPrintModal" type="button" class="btn btn-success">
+                                Print
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table id="tableInvoice" class="table" style="width:100%;">
+                        <thead class="bgDefault">
+                            <tr class="bg-info text-white">
+                                <th></th>
+                                <th style="width: 10%;"><h6>الرقم</h6><h6>SR. #</h6></th>
+                                <th style="width: 25%;">
+                                    <h6>المادة</h6><h6>ITEMS</h6>
+                                </th>
+                                <th style="width: 35%;">
+                                    <h6>البيان</h6><h6>SPECIFICATION</h6>
+                                </th>
+                                <th style="width: 10%;">
+                                    <h6>الكمية</h6><h6>QTY</h6>
+                                </th>
+                                <th style="width: 10%;">
+                                    <h6>سعر الوحدة</h6><h6>UNIT PRICE</h6>
+                                </th>
+                                <th style="width: 10%;">
+                                    <h6>السعر الإجمالي</h6><h6>PRICE</h6>
+                                </th>
+                            </tr>
+                            <tr class="bgGrayPale">
+                                <td></td>
+                                <td></td>
+                                <td><input type="text" class="form-control txtInvoiceItem" /><span class="text-danger rqdInvoiceItem hide">Required</span></td>
+                                <td><textarea class="form-control txtInvoiceSpecification"></textarea><span class="text-danger rqdInvoiceSpecification hide">Required</span></td>
+                                <td><input type="text" class="form-control txtInvoiceQuantity textBoxSmall" /><span class="text-danger rqdInvoiceQuantity hide">Required</span></td>
+                                <td><input type="text" class="form-control txtInvoiceUnitPrice textBoxMedium" /><span class="text-danger rqdInvoiceUnitPrice hide">Required</span></td>
+                                <td><button type="button" class="btn btn-info btnAddInvoiceItem">Add</button></td>
+                            </tr>
+                        </thead>
+                        <tbody class="tbodyInvoice"></tbody>
+                        <tfoot class="bgGrayPale font-weight-bold">
+                            <tr>
+                                <td colspan="6">Item Total</td>
+                                <td class="itemTotal">0.00</td>
+                            </tr>
+                            <tr class="text-danger">
+                                <td colspan="6">VAT (@Model.VAT%)</td>
+                                <td class="invoiceVAT">0.00</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">Sub Total</td>
+                                <td class="invoiceSubTotal">0.00</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">Discount</td>
+                                <td><input type="number" asp-for="@Model.Discount" class="form-control txtDiscountPrice textBoxMedium" /></td>
+                            </tr>
+
+                            <tr class="bgGreenPale">
+                                <td colspan="6">Total</td>
+                                <td class="invoiceTotal">0.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <button type="button" class="btn btn-success" id="btnUpdate">Update</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="updateSuccess hide">
+            <div class="alert alert-success">Quote updated !</div>
+        </div>
+        <p>&nbsp;</p>
+    }
+
+
+
+
+</div>
+<div class="row"><p>&nbsp;</p></div>
+<div class="row">
+    <div class="col-md-6">
+        <table class="table table-bordered">
+            <thead>
+                <tr class="bg-light">
+                    <th>Event Type</th>
+                    <th>Date/Time</th>
+                    <th>Added By</th>
+                </tr>
+            </thead>
+            <tbody class="tbodyEvents"></tbody>
+        </table>
+    </div>
+</div>
+@section Scripts{
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+
+        getQuote();
+        getEvents();
+        var quoteItems = [];
+        var quoteDeletedItems = [];
+        var printInvoiceModel = {
+                "items": [],
+                "lineTotal":0,
+                        "subTotal":0,
+                        "discount":0,
+                        "vat":0,
+                        "total":0
+            };
+        function getQuote() {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetQuote","Proposals")' + '/' +@Model.Id
+                })
+                    .done(function (data) {
+                        // show the response
+                        if (data) {
+                            console.log(JSON.stringify(data));
+                            $('.tbodyInvoice').html('');
+                            let invoiceItemsHTML = '';
+                            for (i = 0; i < data.items.length; i++) {
+                                let newQuoteItem = {
+                                    "id":data.items[i].id,
+                                    "proposalId":data.items[i].proposalId,
+                                    "lineNo":i+1,
+                                    "item": data.items[i].item,
+                                    "specification": data.items[i].specification,
+                                    "quantity": data.items[i].quantity,
+                                    "unitPrice": data.items[i].unitPrice,
+                                    "lineTotal": data.items[i].quantity*data.items[i].unitPrice
+                                };
+                                quoteItems.push(newQuoteItem);
+                                invoiceItemsHTML=invoiceItemsHTML+("<tr><td><button type='button' class='btn-link text-danger btnDeleteQuoteItem' data-lineNo='"+newQuoteItem.lineNo+"'>X</button></td><td>" + newQuoteItem.lineNo + "</td><td><input type='text' class='form-control txtQuoteItem'" + "' data-lineNo='" + newQuoteItem.lineNo + "' value='" + newQuoteItem.item + "' /></td><td><input type='text' class='form-control txtQuoteSpec'" + "' data-lineNo='" + newQuoteItem.lineNo +  "' value='" + newQuoteItem.specification + "' /></td><td><input type='text' class='form-control txtQuoteQty txtQuoteQty" + newQuoteItem.lineNo + "' data-lineNo='" + newQuoteItem.lineNo + "' value='" + newQuoteItem.quantity + "' /></td><td><input type='text' class='form-control txtQuoteUnitPrice txtQuoteUnitPrice" + newQuoteItem.lineNo + "' data-lineNo='" + newQuoteItem.lineNo + "' value='" + newQuoteItem.unitPrice + "' /></td><td><label id='lblLineTotal" + newQuoteItem.lineNo + "' >" + newQuoteItem.lineTotal + "</label></td></tr>");
+                            }
+                            $('.tbodyInvoice').html(invoiceItemsHTML);
+                            $(".itemTotal").html(data.subTotal.toFixed(2));
+                            $(".invoiceSubTotal").html((data.subTotal+data.vat).toFixed(2));
+                            $(".txtDiscountPrice").val(data.discount.toFixed(2));
+                            $(".invoiceVAT").html(data.vat.toFixed(2));
+                            $(".invoiceTotal").html(data.total.toFixed(2));
+                            setInvoiceDataForPrint(data);
+
+                        }
+                    });
+        };
+
+        $("#btnPrintModal").click(function () {
+                printInvoice();
+            });
+
+            function printInvoice() {
+                printJS({ printable: 'printDemo', type: 'html', style: '.printContent{min-height:790px !important;}.floatRight{text-align:right !important;}.tableItems{text-align:center !important;}th{-webkit-print-color-adjust: exact;background-color:#EAEAEA;text-align:center !important;}.text-blue{color:blue;}.text-red{color:red;}.textWhite{color:transparent;}.tableItems{border-collapse: collapse;}.tableCell{border:2px solid black;padding:1px !important;}.centerHeading{width:200px;margin-left:auto;margin-right:auto;}.fullWidth{width:100% !important;}.printWrapper{padding-top:10px;}.heading{width:150px;text-align:center;color:black;border-bottom:3px solid black;padding-bottom:5px;margin-left:200px;margin-right:200px;}.clear{clear:both !important;}.floatRight{float:right;clear:both;}.textRight{text-align:right;}' });
+
+        }
+
+        function setInvoiceDataForPrint(data) {
+
+                let printTableData = '';
+                for (i = 0; i < data.items.length; i++) {
+                                printTableData=printTableData+("<tr><td class='tableCell'>" + (parseInt(i) + 1) + "</td><td class='tableCell'>" + data.items[i].item + "</td><td class='tableCell'>" + data.items[i].specification + "</td><td class='tableCell'>" + data.items[i].quantity + "</td><td class='tableCell'>" + data.items[i].unitPrice + "</td><td class='tableCell'>" + data.items[i].lineTotal + "</td></tr>");
+
+                }
+                $('#printInvoiceBody').html(printTableData);
+                $('#printInvoiceBody').append("<tfoot>");
+                $('#printInvoiceBody').append("<tr><td colspan='4'>&nbsp;</td><td>Items Total</td><td class='tableCell'>"+data.subTotal+"</td> </tr>");
+
+            $('#printInvoiceBody').append('<tr class="text-blue"><td colspan="4">&nbsp;</td><td>VAT ('+@Model.VAT+'%)</td><td class="tableCell">' + data.vat + '</td></tr>');
+
+            if (parseFloat(data.discount) > 0) {
+                    $('#printInvoiceBody').append('<tr class="text-red"><td colspan="4">&nbsp;</td><td>Sub Total</td><td class="tableCell">'+(parseInt(data.subTotal) + parseInt(data.vat))+'</td></tr>');
+                    $('.printInvoiceBody').append('<tr><td colspan="4">&nbsp;</td><td>Discount</td><td class="tableCell">' + data.discount + '</td></tr>');
+                }
+                $('#printInvoiceBody').append('<tr class="text-red"><td colspan="4">&nbsp;</td><td>Total</td><td class="tableCell">'+data.total+'</td></tr>');
+                $('#printInvoiceBody').append("</tfoot>");
+            }
+
+        $("#divQuoteDetails").on("focusout", ".txtQuoteQty", function(){
+
+            let editedLineNo = $(this).data('lineno');
+            let qty = $(this).val();
+            let price = $('.txtQuoteUnitPrice' + editedLineNo).val();
+            $('#lblLineTotal' + editedLineNo).text((price * qty).toFixed(2));
+            quoteItems[editedLineNo - 1].quantity = qty;
+            quoteItems[editedLineNo - 1].lineTotal = (price * qty).toFixed(2);
+            calculateInvoiceTotal();
+        });
+        $("#divQuoteDetails").on("focusout", ".txtQuoteUnitPrice", function(){
+
+            let editedLineNo = $(this).data('lineno');
+            let price = $(this).val();
+            let qty = $('.txtQuoteQty' + editedLineNo).val();
+            $('#lblLineTotal' + editedLineNo).text((price * qty).toFixed(2));
+            quoteItems[editedLineNo - 1].unitPrice = price;
+            quoteItems[editedLineNo - 1].lineTotal = (price * qty).toFixed(2);
+            calculateInvoiceTotal();
+        });
+        $("#divQuoteDetails").on("focusout", ".txtQuoteItem", function(){
+
+            let editedLineNo = $(this).data('lineno');
+            let newItemText = $(this).val();
+            quoteItems[editedLineNo - 1].item = newItemText;
+        });
+        $("#divQuoteDetails").on("focusout", ".txtQuoteSpec", function(){
+
+            let editedLineNo = $(this).data('lineno');
+            let newItemSpec = $(this).val();
+            quoteItems[editedLineNo - 1].specification = newItemSpec;
+        });
+        $("#divQuoteDetails").on("focusout", ".txtDiscountPrice", function(){
+
+
+            calculateInvoiceTotal();
+        });
+
+        $(".btnAddInvoiceItem").on("click", function () {
+                let invoiceAddValidation = true;
+                let valInvoiceItem = $(".txtInvoiceItem").val().trim();
+                let valInvoiceSpecification = $(".txtInvoiceSpecification").val().trim();
+                let valInvoiceQuantity = $(".txtInvoiceQuantity").val().trim();
+                let valInvoiceUnitPrice = $(".txtInvoiceUnitPrice").val().trim();
+                $('.rqdInvoiceItem').hide();
+                $('.rqdInvoiceSpecification').hide();
+                $('.rqdInvoiceQuantity').hide();
+                $('.rqdInvoiceUnitPrice').hide();
+                if (valInvoiceItem === '') {
+                    $('.rqdInvoiceItem').show();
+                    invoiceAddValidation = false;
+                }
+                if (!valInvoiceSpecification) {
+                    $('.rqdInvoiceSpecification').show();
+                    invoiceAddValidation = false;
+                }
+                if (!valInvoiceQuantity) {
+                    $('.rqdInvoiceQuantity').show();
+                    invoiceAddValidation = false;
+                }
+                if (!valInvoiceUnitPrice) {
+                    $('.rqdInvoiceUnitPrice').show();
+                    invoiceAddValidation = false;
+                }
+
+
+                if (invoiceAddValidation) {
+                    let newQuoteItem = {
+                        "lineNo":quoteItems.length+1,
+                        "item": valInvoiceItem,
+                        "specification": valInvoiceSpecification,
+                        "quantity": valInvoiceQuantity,
+                        "unitPrice": valInvoiceUnitPrice,
+                        "lineTotal": (valInvoiceQuantity * valInvoiceUnitPrice).toFixed(2),
+                        "proposalId":quoteItems[0].proposalId
+                    };
+                    quoteItems.push(newQuoteItem);
+                    $('.tbodyInvoice').append("<tr><td><button type='button' class='btn-link text-danger btnDeleteQuoteItem' data-lineNo='"+newQuoteItem.lineNo+"'>X</button></td><td>" + newQuoteItem.lineNo + "</td><td><input type='text' class='form-control txtQuoteItem' value='" + newQuoteItem.item + "' /></td><td><input type='text' class='form-control txtQuoteSpec' value='" + newQuoteItem.specification + "' /></td><td><input type='text' class='form-control txtQuoteQty txtQuoteQty" + newQuoteItem.lineNo + "' data-lineNo='" + newQuoteItem.lineNo + "' value='" + newQuoteItem.quantity + "' /></td><td><input type='text' class='form-control txtQuoteUnitPrice txtQuoteUnitPrice" + newQuoteItem.lineNo + "' data-lineNo='" + newQuoteItem.lineNo + "' value='" + newQuoteItem.unitPrice + "' /></td><td><label id='lblLineTotal" + newQuoteItem.lineNo + "' >" + newQuoteItem.lineTotal + "</label></td></tr>");
+                    resetAddInvoice();
+                    //updatePrintData();
+                    //setInvoiceDataForPrint(printInvoiceModel);
+                }
+            });
+
+            function resetAddInvoice() {
+                $(".txtInvoiceItem").val('');
+                $(".txtInvoiceSpecification").val('');
+                $(".txtInvoiceQuantity").val('');
+                $(".txtInvoiceUnitPrice").val('');
+                calculateInvoiceTotal();
+
+
+            }
+            function calculateInvoiceTotal() {
+                let itemTotal = 0;
+                quoteItems.forEach(function (item) {
+                  itemTotal += item.lineTotal;
+                });
+                $(".itemTotal").html(itemTotal.toFixed(2));
+                let vatAmount = (itemTotal*@Model.VAT) / 100;
+                $(".invoiceVAT").html(vatAmount.toFixed(2));
+                $(".invoiceSubTotal").html((itemTotal+vatAmount).toFixed(2));
+                let discount=$(".txtDiscountPrice").val();
+                $(".invoiceTotal").html(((itemTotal+vatAmount)-discount).toFixed(2));
+        }
+        function updatePrintData(){
+                    let itemTotal = 0;
+                quoteItems.forEach(function (item) {
+                  itemTotal += item.lineTotal;
+                });
+            printInvoiceModel.items = quoteItems;
+            printInvoiceModel.lineTotal = itemTotal;
+                let vatAmount = (itemTotal*@Model.VAT) / 100;
+
+            printInvoiceModel.vat = vatAmount;
+
+            printInvoiceModel.subTotal = itemTotal + vatAmount;
+            let discount = $(".txtDiscountPrice").val();
+            printInvoiceModel.discount = discount;
+            printInvoiceModel.total = (itemTotal + vatAmount) - discount;
+        }
+        function populateQuoteItems() {
+            $('.tbodyInvoice').html('');
+            quoteItems.forEach(function (newQuoteItem) {
+                  $('.tbodyInvoice').append("<tr><td><button type='button' class='btn-link text-danger btnDeleteQuoteItem' data-lineNo='"+newQuoteItem.lineNo+"'>X</button></td><td>" + newQuoteItem.lineNo + "</td><td><input type='text' class='form-control txtQuoteItem' value='" + newQuoteItem.item + "' /></td><td><input type='text' class='form-control txtQuoteSpec' value='" + newQuoteItem.specification + "' /></td><td><input type='text' class='form-control txtQuoteQty txtQuoteQty" + newQuoteItem.lineNo + "' data-lineNo='" + newQuoteItem.lineNo + "' value='" + newQuoteItem.quantity + "' /></td><td><input type='text' class='form-control txtQuoteUnitPrice txtQuoteUnitPrice" + newQuoteItem.lineNo + "' data-lineNo='" + newQuoteItem.lineNo + "' value='" + newQuoteItem.unitPrice + "' /></td><td><label id='lblLineTotal" + newQuoteItem.lineNo + "' >" + newQuoteItem.lineTotal + "</label></td></tr>");
+            });
+        }
+        $("#divQuoteDetails").on("click", ".btnDeleteQuoteItem", function(){
+            let deletedLineNo = $(this).data('lineno');
+            quoteDeletedItems.push(quoteItems[deletedLineNo - 1]);
+            quoteItems.splice(deletedLineNo - 1, 1);
+            populateQuoteItems()
+            calculateInvoiceTotal();
+            //updatePrintData();
+            //setInvoiceDataForPrint(printInvoiceModel);
+        });
+
+        $(".btnYes").click(function () {
+
+            $("#confirmModal").fadeOut();
+            updateQuote();
+        });
+        $(".btnNo").click(function () {
+
+            $("#confirmModal").fadeOut();
+        });
+        $("#btnUpdate").click(function () {
+            console.log("calling confirm modal");
+            $("#confirmModal").fadeIn();
+            console.log("done calling confirm modal");
+        });
+        function updateQuote() {
+                    var updateQuoteModel = {
+                "items": quoteItems,
+                "deletedItems":quoteDeletedItems,
+                "discount": $("#Discount").val(),
+                "totalAmount":$(".invoiceTotal").html()
+            };
+            console.log("JSON obj : " + JSON.stringify(updateQuoteModel));
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UpdateQuote")',
+                data: JSON.stringify(updateQuoteModel),
+                contentType: "application/json;"
+            })
+                .done(function (data) {
+                    // show the response
+                    if (data) {
+                        //$("#divTaskDetails").fadeOut('4000', 'linear');
+                        //$("#alertTaskSuccess").html("Task updated successfully!")
+                        //$("#alertTaskSuccess").fadeIn(2000, 'linear', function () {
+                        //    $(this).fadeOut(4000, 'linear');
+                        $('#lblQuoteRevisionNo').text(data);
+                        $('#quoteRevisionNo').text(data);
+                        $(".updateSuccess").fadeIn().delay(2000).fadeOut();
+                        updatePrintData();
+                        setInvoiceDataForPrint(printInvoiceModel);
+                        }
+
+
+                });
+        }
+
+        function getEvents() {
+            
+            let url = '@Url.Action("GetEvents","Proposals")' + '/' +@Model.Id;
+            console.log('Attempting to get events! '+url);
+            $.ajax({
+                    type: 'GET',
+                    url: url
+                })
+                .done(function (data) {
+                    // show the response
+                    console.log('events data'+JSON.stringify(data));
+                    $.each(data, function (index, value) {
+                            console.log('Events: ' + JSON.stringify(value));
+                            $('.tbodyEvents').append("<tr><td>" + value.eventType + "</td><td>" + value.timestamp +  "</td><td>" + value.addedBy + "</td></tr>");
+                            
+                        });
+                });
+        }
+
+        });
+
+    </script>
+}

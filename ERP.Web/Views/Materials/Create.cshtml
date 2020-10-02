@@ -1,0 +1,52 @@
+@model ERP.Models.Materials
+
+
+
+<form asp-action="Create" asp-controller="Materials" method="POST">
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>Add Material</h2>
+    </div>
+    <div class="panel-body">
+        <table class="table">
+    <tbody>
+        <tr>
+            <td> Enter the Product Code : </td>
+            <td>@Html.TextBoxFor(m=>m.Code,new {@class="form-control", maxlength="50"})</td>
+            <td>
+                @Html.ValidationMessageFor(m=>m.Code,null,new {@class="text-danger"})
+            </td>
+
+        </tr>
+
+        <tr>
+            <td> Enter the Product Name : </td>
+            <td> <input type="text" id="Name" name="Name" class="form-control" maxlength="100"> </td>
+            <td>@Html.ValidationMessageFor(m=>m.Name,null,new {@class="text-danger"})</td>      
+        </tr>
+
+        <tr>
+            <td> Description  : </td>
+            <td> <textarea id="Specification" name="Specification" class="form-control" maxlength="100"></textarea></td>
+        </tr>
+
+        <tr>
+            <td> Enter the Shelf Number : </td>
+            <td> <input type="text" id="ShelfNumber" name="ShelfNumber" class="form-control" maxlength="30"> </td>
+            <td>@Html.ValidationMessageFor(m => m.ShelfNumber, null, new { @class = "text-danger" })</td>
+        </tr>
+
+        <tr>
+            <td colspan="2"> <input type="Submit" value="Save" class="btn btn-success"> </td>
+        </tr>
+    </tbody>
+
+</table>
+        @if (!String.IsNullOrEmpty(ViewBag.Error))
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+    </div>
+</div>
+
+</form>

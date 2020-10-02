@@ -1,0 +1,523 @@
+﻿@model ERP.Models.Views.ProposalView;
+
+<form id="formCreateProposal" asp-action="Create" asp-controller="Proposals" method="POST">
+    <div class="card shadow-lg p-3 mb-5 text-dark rounded">
+        <div class="card-header bg-info text-white">
+            <h2 class="card-title">Add Enquiry</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>@Html.CheckBoxFor(m => m.IsCompany)<span>Company</span></td>
+                                <td>@Html.CheckBoxFor(m => m.CreateNew)<span>New</span></td>
+                            </tr>
+
+                            <tr id="trSelectCompany" class="selectPartner">
+                                <td> Select Company  : </td>
+                                <td>
+                                    <select id="ddlCompanies" asp-for="@Model.SelectedCompanyId" asp-items="@Model.Companies" class="form-control">
+                                        <option disabled selected value="-1">--- SELECT ---</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr id="trSelectPerson" class="selectPartner">
+                                <td> Select Person  : </td>
+                                <td>
+                                    <select id="ddlPersons" asp-for="@Model.SelectedPersonId" asp-items="@Model.Persons" class="form-control">
+                                        <option disabled selected value="-1">--- SELECT ---</option>
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr id="trEnterCompany" class="enterPartner">
+                                <td> Enter Company Name  : </td>
+                                <td> <input asp-for="@Model.Partner.Name" class="form-control partnerName" maxlength="45" /> </td>
+                            </tr>
+                            <tr id="trEnterPerson" class="enterPartner">
+                                <td> Enter Person Name  : </td>
+                                <td> <input asp-for="@Model.PersonName" class="form-control personName" maxlength="45" /> </td>
+                            </tr>
+                            <tr id="trPartnerExist" class="hide">
+                                <td colspan="2">
+                                    <div id="divPartnerExist" class="alert alert-danger"></div>
+                                </td>
+                            </tr>
+                            <tr class="pointOfContact">
+                                <td> VAT Number : </td>
+                                <td> <input asp-for="@Model.Partner.VATNo" class="form-control partnerDetails vatNo" maxlength="30" /> </td>
+                            </tr>
+                            <tr>
+                                <td> Address  : </td>
+                                <td> <textarea asp-for="@Model.Partner.Address" class="form-control partnerDetails partnerAddress"></textarea> </td>
+                            </tr>
+                            <tr>
+                                <td> Phone  : </td>
+                                <td> <input asp-for="@Model.Partner.MobileNo" class="form-control partnerDetails partnerMobile" maxlength="15" /> </td>
+                            </tr>
+                            <tr>
+                                <td> Email  : </td>
+                                <td> <input asp-for="@Model.Partner.EmailId" class="form-control partnerDetails partnerEmail" maxlength="30" /> </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td> Mode of Contact : </td>
+                                <td>
+                                    <select class="form-control" asp-items="Html.GetEnumSelectList<ProposalContactTypes>()"
+                                            asp-for="@Model.ContactMode"></select>
+                                    <!-- @Html.DropDownList("ContactMode",
+            Html.GetEnumSelectList<ProposalContactTypes>(),
+            "Select Contact mode",new { @class = "form-control" })  -->
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <div id="divContacts" class="card hide">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <h4>Contacts</h4>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" id="btnAddContact" class="btn btn-success">Add</button>
+                                </div>
+                            </div>
+
+                            <div id="divNoContacts" class="alert alert-warning hide">No Contacts added!</div>
+                            <div id="divAddedContacts" class="card hide">
+                                <div class="card-body">
+                                    <h5>Added Contacts</h5>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Select</th>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Phone</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="contactsTbody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="divNewContact" class="card hide">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <h5>Add New Contact</h5>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" id="btnCloseContact" class="btn btn-primary">Close</button>
+                                        </div>
+                                    </div>
+
+                                    <table class="table">
+                                        <tr>
+                                            <td>Name</td>
+                                            <td><input asp-for="@Model.Contact.Name" class="form-control" maxlength="45" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Email</td>
+                                            <td><input asp-for="@Model.Contact.Email" class="form-control" maxlength="45" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Phone</td>
+                                            <td><input asp-for="@Model.Contact.ContactNo" class="form-control" maxlength="15" /></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <input id="selectedContactId" type="hidden" asp-for="@Model.SelectedContactId" />
+            </div>
+            <div class="row">
+                @*-------------------------------Invoice Items - Start*@
+                <div class="card">
+                    <div class="card-header">
+                        <h6>Items</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="tableInvoice" class="table" style="width:100%;">
+                                        <thead class="bgDefault">
+                                            <tr>
+                                                <th style="width: 10%;"><h6>الرقم</h6><h6>SR. #</h6></th>
+                                                <th style="width: 25%;">
+                                                    <h6>المادة</h6><h6>ITEMS</h6>
+                                                </th>
+                                                <th style="width: 35%;">
+                                                    <h6>البيان</h6><h6>SPECIFICATION</h6>
+                                                </th>
+                                                <th style="width: 10%;">
+                                                    <h6>الكمية</h6><h6>QTY</h6>
+                                                </th>
+                                                <th style="width: 10%;">
+                                                    <h6>سعر الوحدة</h6><h6>UNIT PRICE</h6>
+                                                </th>
+                                                <th style="width: 10%;">
+                                                    <h6>السعر الإجمالي</h6><h6>PRICE</h6>
+                                                </th>
+                                            </tr>
+                                            <tr class="bgGrayPale">
+                                                <td></td>
+                                                <td><input type="text" class="form-control txtInvoiceItem" /><span class="text-danger rqdInvoiceItem hide">Required</span></td>
+                                                <td><textarea class="form-control txtInvoiceSpecification"></textarea><span class="text-danger rqdInvoiceSpecification hide">Required</span></td>
+                                                <td><input type="text" class="form-control txtInvoiceQuantity textBoxSmall" /><span class="text-danger rqdInvoiceQuantity hide">Required</span></td>
+                                                <td><input type="text" class="form-control txtInvoiceUnitPrice textBoxMedium" /><span class="text-danger rqdInvoiceUnitPrice hide">Required</span></td>
+                                                <td><button type="button" class="btn btn-info btnAddInvoiceItem">Add</button></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="tbodyInvoice"></tbody>
+                                        <tfoot class="bgGrayPale font-weight-bold">
+                                            <tr>
+                                                <td colspan="5">Item Total</td>
+                                                <td class="itemTotal">0.00</td>
+                                            </tr>
+                                            <tr class="text-danger">
+                                                <td colspan="5">VAT (@ViewBag.VAT%)</td>
+                                                <td class="invoiceVAT">0.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="5">Sub Total</td>
+                                                <td class="invoiceSubTotal">0.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4">Discount</td>
+                                                <td><button type="button" class="btn btn-info btnApplyDiscount">Apply</button></td>
+                                                <td><input type="number" asp-for="@Model.Discount" class="form-control txtDiscountPrice textBoxMedium" /></td>
+                                            </tr>
+
+                                            <tr class="bgGreenPale">
+                                                <td colspan="5">Total</td>
+                                                <td class="invoiceTotal">0.00</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                        </div>
+                    </div>
+                </div>
+                @*-------------------------------Invoice Items - End*@
+            </div>
+            <p>&nbsp;</p>
+            <div class="row">
+                <button type="button" class="btn btn-success btnSave">Save</button>
+                @*<input type="Submit" value="Save" class="btn btn-success">*@
+            </div>
+            <input class="modelInvoiceItems" type="hidden" asp-for="@Model.InvoiceItems" />
+            @if (!String.IsNullOrEmpty(ViewBag.Error))
+            {
+                <div class="alert alert-danger">@Html.Raw(@ViewBag.Error)</div>
+            }
+            @if (!String.IsNullOrEmpty(ViewBag.Success))
+            {
+                <div class="alert alert-success">@Html.Raw(@ViewBag.Success)</div>
+            }
+        </div>
+    </div>
+    @*<div class="text-danger" asp-validation-summary="All">
+
+        </div>*@
+</form>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            
+                $("#trSelectPerson").hide();
+                $(".enterPartner").hide();
+                $(".partnerDetails").prop("disabled", true);
+            
+            reset = function () {
+                $('.partnerDetails').val('');
+                $('#ddlCompanies').val('-1');
+                $('#ddlPersons').val('-1');
+                $('#divContacts').hide();
+                $('#divNewContact').hide();
+                $('#divNoContacts').hide();
+                $('#contactsTbody').html('');
+                $('#divAddedContacts').hide();
+                $('#divPartnerExist').html('');
+                $('#trPartnerExist').hide();
+            };
+
+            $('#IsCompany').change(function () {
+                reset();
+                if (this.checked) {
+
+                if ($('#CreateNew').prop('checked'))
+                    {
+                        $(".selectPartner").hide();
+                        $(".enterPartner").show();
+                        $(".partnerDetails").prop("disabled", false);
+                        $("#trEnterPerson").hide();
+                        $("#trEnterCompany").show();
+                        $('#divContacts').show();
+                        $('#divNewContact').show();
+                }
+                    else {
+                        $(".selectPartner").show();
+                        $(".enterPartner").hide();
+                        $(".partnerDetails").prop("disabled", true);
+                        $("#trSelectPerson").hide();
+                        $("#trSelectCompany").show();
+                }
+                    $(".pointOfContact").show();
+            }
+                else {
+                if ($('#CreateNew').prop('checked'))
+                    {
+                        $(".selectPartner").hide();
+                        $(".enterPartner").show();
+                        $(".partnerDetails").prop("disabled", false);
+                        $("#trEnterPerson").show();
+                        $("#trEnterCompany").hide();
+                }
+                    else {
+                        $(".selectPartner").show();
+                        $(".enterPartner").hide();
+                        $(".partnerDetails").prop("disabled", true);
+                        $("#trSelectPerson").show();
+                        $("#trSelectCompany").hide();
+                }
+                    $(".pointOfContact").hide();
+            }
+        });
+
+
+            $('#CreateNew').change(function () {
+            reset();
+            if (this.checked) {
+                    $(".selectPartner").hide();
+                    $(".enterPartner").show();
+                    $(".partnerDetails").prop("disabled", false);
+                    if ($('#IsCompany').prop('checked'))
+                    {
+                        $("#trEnterPerson").hide();
+                        $("#trEnterCompany").show();
+                        $(".pointOfContact").show();
+                        $('#divContacts').show();
+                        $('#divNewContact').show();
+                    }
+                    else {
+                        $("#trEnterPerson").show();
+                        $("#trEnterCompany").hide();
+                        $(".pointOfContact").hide();
+                    }
+                }
+                else {
+                    $(".selectPartner").show();
+                    $(".enterPartner").hide();
+                    $(".partnerDetails").prop("disabled", true);
+                    if ($('#IsCompany').prop('checked'))
+                    {
+                        $("#trSelectPerson").hide();
+                        $("#trSelectCompany").show();
+                        $(".pointOfContact").show();
+                    }
+                    else {
+                        $("#trSelectPerson").show();
+                        $("#trSelectCompany").hide();
+                        $(".pointOfContact").hide();
+                    }
+                }
+            });
+
+            
+
+
+            $(".partnerName").focusout(function () {
+                let partnerName = $(this).val();
+                if(partnerName!='')getPartnerDetailsByName(partnerName);
+            });
+            $(".personName").focusout(function () {
+                let personName = $(this).val();
+                if(personName!='')getPartnerDetailsByName(personName);
+            });
+            getPartnerDetailsByName = function (businessPartnerName) {
+                $.ajax({
+                type: 'GET',
+                    url: '@Url.Action("GetBusinessPartnerByName","Proposals")'+'?name='+businessPartnerName
+                })
+                .done(function(data){
+                    // show the response
+                    if (data) {
+                        $('#divPartnerExist').html('Name ' + businessPartnerName + ' already exist!');
+                        $('#trPartnerExist').show();
+                        $('.partnerName').val('');
+                        $('.personName').val('');
+                    } else {
+                        $('#divPartnerExist').html('');
+                        $('#trPartnerExist').hide();
+                    }
+                });
+            };
+            $('#ddlCompanies').change(function () {
+                var selectedId = $(this).val();
+                getBusinessPartnerDetails(selectedId);
+            });
+            $('#ddlPersons').change(function () {
+                var selectedId = $(this).val();
+                getBusinessPartnerDetails(selectedId);
+            });
+            $('#btnAddContact').click(function () {
+                $('#divNewContact').show();
+                $(".chkContact").prop("disabled", true);
+
+            });
+            $('#btnCloseContact').click(function () {
+                $('#divNewContact').hide();
+                $(".chkContact").prop("disabled", false);
+            });
+
+            
+            getBusinessPartnerDetails = function (id) {
+                
+                
+                $.ajax({
+                type: 'GET',
+                    url: '@Url.Action("GetBusinessPartnerById","Proposals")'+'/'+id
+                })
+                .done(function(data){
+                    // show the response
+                    if (data) {
+                        console.log(JSON.stringify(data));
+                        
+                        $('.partnerId').val(data.id);
+                        $('.partnerName').val(data.name);
+                        $('.contactPerson').val(data.pointofContact);
+                        $('.partnerAddress').val(data.address);
+                        $('.partnerEmail').val(data.emailId);
+                        $('.partnerMobile').val(data.mobileNo);
+                        $('.vatNo').val(data.vatNo);
+                        if (data.businessPartnerTypeId === 2) {
+                            $('#divContacts').show();
+                            if (data.contacts.length === 0) {
+                                $('#divNoContacts').show();
+                                $('#divAddedContacts').hide();
+                            }
+                            else {
+                                $('#contactsTbody').html('');
+                                $('#divAddedContacts').show();
+                                $('#divNoContacts').hide();
+                                for (var i = 0, len = data.contacts.length; i < len; i++) {
+                                    $('#contactsTbody').append('<tr><td><input class="chkContact" type="checkbox" data-id="' + data.contacts[i].id + '"/></td><td>' + data.contacts[i].name + '</td><td>' + data.contacts[i].email + '</td><td>' + data.contacts[i].contactNo + '</td></tr>');
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+            $(document).on('change', '.chkContact', function () {
+                let contactId = 0;
+                if (this.checked) {
+                    contactId = $(this).data("id");
+                }
+                $('#selectedContactId').val(contactId);
+            });
+            //$('.chkContact').change(function () {
+            //    alert($(this).data("id"));
+            //});
+            var invoiceItems = [];
+            $(".btnAddInvoiceItem").on("click", function () {
+                let invoiceAddValidation = true;
+                let valInvoiceItem = $(".txtInvoiceItem").val().trim();
+                let valInvoiceSpecification = $(".txtInvoiceSpecification").val().trim();
+                let valInvoiceQuantity = $(".txtInvoiceQuantity").val().trim();
+                let valInvoiceUnitPrice = $(".txtInvoiceUnitPrice").val().trim();
+                $('.rqdInvoiceItem').hide();
+                $('.rqdInvoiceSpecification').hide();
+                $('.rqdInvoiceQuantity').hide();
+                $('.rqdInvoiceUnitPrice').hide();
+                if (valInvoiceItem === '') {
+                    $('.rqdInvoiceItem').show();
+                    invoiceAddValidation = false;
+                }
+                if (!valInvoiceSpecification) {
+                    $('.rqdInvoiceSpecification').show();
+                    invoiceAddValidation = false;
+                }
+                if (!valInvoiceQuantity) {
+                    $('.rqdInvoiceQuantity').show();
+                    invoiceAddValidation = false;
+                }
+                if (!valInvoiceUnitPrice) {
+                    $('.rqdInvoiceUnitPrice').show();
+                    invoiceAddValidation = false;
+                }
+
+
+                if (invoiceAddValidation) {
+                    let newInvoiceItem = {
+                        
+                        "item": valInvoiceItem,
+                        "specification": valInvoiceSpecification,
+                        "quantity": valInvoiceQuantity,
+                        "unitPrice": valInvoiceUnitPrice,
+                        "lineTotal": valInvoiceQuantity*valInvoiceUnitPrice
+                    };
+                    invoiceItems.push(newInvoiceItem);
+                    $('.tbodyInvoice').append("<tr><td>" + (invoiceItems.length) + "</td><td>" + newInvoiceItem.item + "</td><td>" + newInvoiceItem.specification + "</td><td>" + newInvoiceItem.quantity + "</td><td>" + newInvoiceItem.unitPrice + "</td><td>" + newInvoiceItem.lineTotal + "</td></tr>");                            
+                    resetAddInvoice();
+                    $('.modelInvoiceItems').val(JSON.stringify(invoiceItems));
+                }
+            });           
+
+            function resetAddInvoice() {
+                $(".txtInvoiceItem").val('');
+                $(".txtInvoiceSpecification").val('');
+                $(".txtInvoiceQuantity").val('');
+                $(".txtInvoiceUnitPrice").val('');
+                calculateInvoiceTotal();
+                
+                
+                
+            }
+            function calculateInvoiceTotal() {
+                let itemTotal = 0;
+                invoiceItems.forEach(function (item) {
+                  itemTotal += item.lineTotal;
+                });
+                $(".itemTotal").html(itemTotal);
+                let vatAmount = (itemTotal* @ViewBag.VAT) / 100;
+                $(".invoiceVAT").html(vatAmount);
+                $(".invoiceSubTotal").html(itemTotal+vatAmount);
+                let discount=$(".txtDiscountPrice").val();
+                $(".invoiceTotal").html((itemTotal+vatAmount)-discount);
+            }
+
+            $('.btnApplyDiscount').click(function () {
+                let invoiceSubTotal = $(".invoiceSubTotal").html();
+                let discount=$(".txtDiscountPrice").val();
+                $(".invoiceTotal").html(invoiceSubTotal-discount);
+            });
+
+            $('.btnSave').click(function () {
+                $.blockUI({ message: $('#divMessage') });
+                $("#formCreateProposal").submit();
+                $.unblockUI();
+            })
+
+        });
+    </script>
+}

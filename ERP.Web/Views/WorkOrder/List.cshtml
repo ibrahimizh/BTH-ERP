@@ -1,0 +1,35 @@
+@model IEnumerable<WorkOrder>
+
+<div class="card mb-3 shadow-lg rounded">
+    <div class="card-header bgInfo1">
+        <h2 class="card-title">Work Orders</h2>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <tr class="bgInfo2">
+                <th>Id</th>
+                <th>Title</th>
+                <th>Target Date</th>
+                <th>Status</th>
+                <th>Invoiced Amount</th>
+                <th>Paid Amount</th>
+                <th>Balance Amount</th>
+                <th>Details</th>
+                
+            </tr>
+            @foreach (var workorder in Model)
+            {
+                <tr>
+                    <td>@workorder.Id</td>
+                    <td>@workorder.Title</td>
+                    <td>@workorder.TargetDate.ToShortDateString()</td>
+                    <td>@workorder.StatusId</td>
+                    <td>@workorder.InvoicedAmount</td>
+                    <td>@workorder.PaidAmount</td>
+                    <td>@(workorder.InvoicedAmount-workorder.PaidAmount)</td>
+                    <td>@Html.ActionLink("Details","Details","WorkOrder",new{id=@workorder.Id},new{@class="btn bgDark"})</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

@@ -1,0 +1,383 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ERP.Web</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css"
+          asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
+          crossorigin="anonymous"
+          integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" />
+    <link rel="stylesheet" href="~/lib/jqueryui/jquery-ui.min.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/print.min.css" />
+</head>
+<body>
+    <input type="hidden" id="userPermissions" />
+    <nav class="navbar sticky-top navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="~/images/BTHlogo.png" />
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                <ul class="navbar-nav flex-grow-1 bthNavbar">
+                    @*@if (User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("1") || User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("2") || User.Claims.Single(c => c.Type == "role").Value == "admin")
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Materials
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    @if (User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("1") || User.Claims.Single(c => c.Type == "role").Value == "admin")
+                                    {
+                                        <a class="dropdown-item" asp-area="" asp-controller="Materials" asp-action="Create">Add</a>
+                                    }
+                                    @if (User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("2") || User.Claims.Single(c => c.Type == "role").Value == "admin")
+                                    {
+                                        <a class="dropdown-item" asp-area="" asp-controller="Materials" asp-action="List">View</a>
+                                    }
+                                    @if (User.Claims.Single(c => c.Type == "role").Value == "admin")
+                                    {
+                                        <a class="dropdown-item" asp-area="" asp-controller="Materials" asp-action="List2">Edit</a>
+                                    }
+                                </div>
+                            </li>
+                        }
+                        @if (User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("4") || User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("5") || User.Claims.Single(c => c.Type == "role").Value == "admin")
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Suppliers
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    @if (User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("4") || User.Claims.Single(c => c.Type == "role").Value == "admin")
+                                    {
+                                        <a class="dropdown-item" asp-area="" asp-controller="Suppliers" asp-action="Create">Add</a>
+                                    }
+                                    @if (User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("5") || User.Claims.Single(c => c.Type == "role").Value == "admin")
+                                    {
+                                        <a class="dropdown-item" asp-area="" asp-controller="Suppliers" asp-action="List">View</a>
+                                    }
+                                </div>
+                            </li>
+                        }
+                        @if (User.Claims.Single(c => c.Type == "role").Value == "admin")
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Employees
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Employee" asp-action="Create">Add</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Employee" asp-action="List">View</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Employee" asp-action="Permissions">Permissions</a>
+                                </div>
+                            </li>
+                        }
+                        @if (User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("10") || User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("11") || User.Claims.Single(c => c.Type == "role").Value == "admin")
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Purchase Orders
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-area="" asp-controller="PurchaseOrder" asp-action="Create">Add</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="PurchaseOrder" asp-action="List">List</a>
+                                </div>
+                            </li>
+                        }
+                        @if (User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("15") || User.Claims.Single(c => c.Type == "role").Value == "admin")
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Customers
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-area="" asp-controller="BusinessPartner" asp-action="Edit">Edit</a>
+                                </div>
+                            </li>
+                        }
+                        @if (User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("16") || User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("17") || User.Claims.Single(c => c.Type == "role").Value == "admin")
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Enquiries
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Proposals" asp-action="Create">Add</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Proposals" asp-action="List2">List</a>
+                                </div>
+                            </li>
+                        }
+                        @if (User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("19") || User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("20") || User.Claims.Single(c => c.Type == "role").Value == "admin")
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Work Orders
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-area="" asp-controller="WorkOrder" asp-action="List">List</a>
+                                </div>
+                            </li>
+                        }
+
+                        @if (User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("29") || User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("30") || User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("31") || User.Claims.Single(c => c.Type == "role").Value == "admin")
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Reports
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-area="" asp-controller="WorkOrder" asp-action="Reports">Work Order Report</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="WorkOrder" asp-action="TaskReport">Task Report</a>
+                                    @if (User.Claims.Single(c => c.Type == "role").Value == "admin" || User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("30") || User.Claims.Single(c => c.Type == "features").Value.Split(',').Contains("31"))
+                                    {
+                                        <a class="dropdown-item" asp-area="" asp-controller="WorkOrder" asp-action="PaymentReport">Customer Payments Report</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="PurchaseOrder" asp-action="GetSupplierPaymentsReport">Supplier Payments Report</a>
+                                    }
+                                </div>
+                            </li>
+
+                        }*@
+
+
+
+                </ul>
+                <br />
+                <h6>Welcome @User.Claims.FirstOrDefault(c => c.Type == "name").Value</h6>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <div class="container-fluid">
+        <div class="row">
+            @*<nav class="col-md-2 d-none d-md-block bg-dark text-white sidebar sidenav">
+                    <div class="sidebar-sticky">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link active" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" asp-controller="Suppliers" asp-action="List">Suppliers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" asp-controller="Materials" asp-action="List">Materials</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" asp-controller="PurchaseOrder" asp-action="List">Purchase Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" asp-controller="Employee" asp-action="List">Employees</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" asp-controller="Proposals" asp-action="List">Enquiries</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" asp-controller="WorkOrder" asp-action="List">Work-Orders</a>
+                            </li>
+                        </ul>
+
+
+                    </div>
+                </nav>*@
+
+            <main role="main" class="col-md-12 ml-sm-auto col-lg-112 pt-3 px-4">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <div id="divMessage" style="display: none;">
+        Please wait ....
+    </div>
+
+
+    <!-- <div class="container">
+        <partial name="_CookieConsentPartial" />
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div> -->
+
+    <footer class="border-top footer text-muted">
+
+        <div class="container">
+            &copy; 2019 - BTH ERP - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+            asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+            asp-fallback-test="window.jQuery"
+            crossorigin="anonymous"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"
+            asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
+            asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+            crossorigin="anonymous"
+            integrity="sha256-E/V4cWE4qvAeO5MOhjtGtqDzPndRO1LBk8lJ/PR7CA4=">
+    </script>
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/jspdf.min.js"></script>
+    <script type="text/javascript" src="~/js/pdfFromHTML.js"></script>
+    <script type="text/javascript" src="~/js/print.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".datepicker").datepicker({ changeYear: true, yearRange: "2017:2099" });
+
+            var currentDateTime = new Date();
+            $('.datetimepicker').datetimepicker({
+
+                minDate: currentDateTime
+            });
+            $('.datetimepicker2').datetimepicker();
+
+            loadUserPermissions();
+
+            function loadUserPermissions() {
+                let url = '@Url.Action("GetPermissionsArray","Employee")' + '/' + @User.Claims.FirstOrDefault(c => c.Type == "userid").Value
+                    console.log(url);
+                $.ajax({
+                    type: 'GET',
+                    url: url
+                })
+                .done(function (data) {
+                        let navbarHTML = '';
+
+                        if (data.indexOf(1) >= 0 || data.indexOf(2) >= 0) {
+                            navbarHTML = navbarHTML + '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Materials</a><div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+                            if (data.indexOf(1) >= 0) {
+                                navbarHTML = navbarHTML + '<a href="../Materials/Create" class="dropdown-item" asp-controller="Materials" asp-action="Create">Add</a>';
+                            }
+                            if (data.indexOf(2) >= 0) {
+                                navbarHTML = navbarHTML + '<a href="../Materials/List" class="dropdown-item" asp-controller="Materials" asp-action="List">View</a>';
+                            }
+                            if (data.indexOf(3) >= 0) {
+                                navbarHTML = navbarHTML + '<a href="../Materials/List2" class="dropdown-item" asp-controller="Materials" asp-action="List2">Edit</a>';
+                            }
+                            navbarHTML = navbarHTML + '</div></li>';
+                        }
+
+                        if (data.indexOf(4) >= 0 || data.indexOf(5) >= 0) {
+                            navbarHTML = navbarHTML + '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Suppliers</a><div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+                            if (data.indexOf(4) >= 0) {
+                                navbarHTML = navbarHTML + '<a href="../Suppliers/Create" class="dropdown-item" asp-area="" asp-controller="Suppliers" asp-action="Create">Add</a>';
+                            }
+                            if (data.indexOf(5) >= 0) {
+                                navbarHTML = navbarHTML + '<a href="../Suppliers/List" class="dropdown-item" asp-area="" asp-controller="Suppliers" asp-action="List">View</a>';
+                            }
+                            navbarHTML = navbarHTML + '</div></li>';
+                        }
+
+                        if (data.indexOf(7) > 0 || data.indexOf(8) > 0) {
+                            navbarHTML = navbarHTML + '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Employees</a><div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+                            if (data.indexOf(7) > 0) {
+                                navbarHTML = navbarHTML + '<a href="../Employee/Create" class="dropdown-item" asp-area="" asp-controller="Employee" asp-action="Create">Add</a>';
+                            }
+                            if (data.indexOf(8) > 0) {
+                                navbarHTML = navbarHTML + '<a href="../Employee/List" class="dropdown-item" asp-area="" asp-controller="Employee" asp-action="List">View</a>';
+                            }
+                            if (data.indexOf(9) > 0) {
+                                    navbarHTML = navbarHTML + '<a href="../Employee/Permissions" class="dropdown-item" asp-area="" asp-controller="Employee" asp-action="Permissions">Permissions</a>';
+                            }
+                            navbarHTML = navbarHTML + '</div></li>';
+                        }
+
+                        if (data.indexOf(10) > 0 || data.indexOf(11) > 0) {
+                            navbarHTML = navbarHTML + '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Purchase Orders</a><div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+                            if (data.indexOf(10) > 0) {
+                                navbarHTML = navbarHTML + '<a href="../PurchaseOrder/Create" class="dropdown-item" asp-area="" asp-controller="PurchaseOrder" asp-action="Create">Add</a>';
+                            }
+                            if (data.indexOf(11) > 0) {
+                                navbarHTML = navbarHTML + '<a href="../PurchaseOrder/List" class="dropdown-item" asp-area="" asp-controller="PurchaseOrder" asp-action="List">List</a>';
+                            }
+                            navbarHTML = navbarHTML + '</div></li>';
+                        }
+
+                        if (data.indexOf(15) > 0) {
+                            navbarHTML = navbarHTML + '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Customers</a><div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+                            if (data.indexOf(15) > 0) {
+                                navbarHTML = navbarHTML + '<a href="../BusinessPartner/Edit" class="dropdown-item" asp-area="" asp-controller="BusinessPartner" asp-action="Edit">Edit</a>';
+                            }
+                            navbarHTML = navbarHTML + '</div></li>';
+                        }
+
+                        if (data.indexOf(16) > 0 || data.indexOf(17) > 0) {
+                            navbarHTML = navbarHTML + '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Enquiries</a><div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+                            if (data.indexOf(16) > 0) {
+                                navbarHTML = navbarHTML + '<a href="../Proposals/Create" class="dropdown-item" asp-area="" asp-controller="Proposals" asp-action="Create">Add</a>';
+                            }
+                            if (data.indexOf(17) > 0) {
+                                navbarHTML = navbarHTML + '<a href="../Proposals/List2" class="dropdown-item" asp-area="" asp-controller="Proposals" asp-action="List2">List</a>';
+                            }
+                            navbarHTML = navbarHTML + '</div></li>';
+                        }
+
+                        if (data.indexOf(19) > 0|| data.indexOf(20) > 0) {
+                            navbarHTML = navbarHTML + '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Work Orders</a><div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+                            if (data.indexOf(20) > 0) {
+                                navbarHTML = navbarHTML + '<a href="@Url.Content("~/WorkOrder/List")" class="dropdown-item" asp-area="" asp-controller="WorkOrder" asp-action="List">List</a>';
+                            }
+                            navbarHTML = navbarHTML + '</div></li>';
+                        }
+
+                        if (data.indexOf(29) > 0 || data.indexOf(30) > 0 || data.indexOf(31) > 0) {
+                            navbarHTML = navbarHTML + '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reports</a><div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+                            if (data.indexOf(26) > 0) {
+                                navbarHTML = navbarHTML + '<a href="@Url.Content("~/WorkOrder/Reports")" class="dropdown-item" asp-area="" asp-controller="WorkOrder" asp-action="Reports">Work Order Report</a>';
+                            }
+                            if (data.indexOf(29) > 0) {
+                                navbarHTML = navbarHTML + '<a href="@Url.Content("~/WorkOrder/TaskReport")" class="dropdown-item" asp-area="" asp-controller="WorkOrder" asp-action="TaskReport">Task Report</a>';
+                            }
+                            if (data.indexOf(30) > 0) {
+                                navbarHTML = navbarHTML + '<a href="@Url.Content("~/WorkOrder/PaymentReport")" class="dropdown-item" asp-area="" asp-controller="WorkOrder" asp-action="PaymentReport">Customer Payments Report</a>';
+                            }
+                            if (data.indexOf(31) > 0) {
+                                navbarHTML = navbarHTML + '<a href="@Url.Content("~/PurchaseOrder/GetSupplierPaymentsReport")" class="dropdown-item" asp-area="" asp-controller="PurchaseOrder" asp-action="GetSupplierPaymentsReport">Supplier Payments Report</a>';
+                            }
+                            navbarHTML = navbarHTML + '</div></li>';
+                        }
+
+                    navbarHTML = navbarHTML + '<li class="nav-item"><a href="../Auth/Logout" asp-controller="Auth" asp-action="Logout" class="btn btn-danger">Logout</a></li>';
+                    $('.bthNavbar').html('');
+                    $('.bthNavbar').append(navbarHTML);
+
+
+
+
+                });
+            }
+
+        });
+
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

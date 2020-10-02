@@ -1,0 +1,30 @@
+@model IEnumerable<ERP.Models.Views.SuppliersView>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>List of Suppliers</h2>
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered">
+            <tr>
+                <th>Company Name</th>
+                <th>Point of Contact</th>
+                <th>Mobile Number</th>
+                <th>Email Id</th>
+                <th>Added By</th>
+                <th>Timestamp</th>
+            </tr>
+            @foreach (var supplier in Model)
+            {
+            <tr>
+                <td>@supplier.Name</td>
+                <td>@supplier.PointofContact</td>
+                <td>@supplier.MobileNo</td>
+                <td>@supplier.EmailId</td>
+                <td>@supplier.AddedByName</td>
+                <td>@supplier.Timestamp</td>
+            </tr>
+            }
+        </table>
+    </div>
+</div>

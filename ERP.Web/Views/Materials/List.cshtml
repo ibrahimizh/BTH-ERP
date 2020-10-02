@@ -1,0 +1,30 @@
+@model IEnumerable<ERP.Models.Views.MaterialsView>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>List of Materials</h2>
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered">
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Shelf Number</th>
+                <th>Added By</th>
+                <th>Timestamp</th>
+            </tr>
+            @foreach (var material in Model)
+            {
+                <tr>
+                    <td>@material.Code</td>
+                    <td>@material.Name</td>
+                    <td>@material.Quantity</td>
+                    <td>@material.ShelfNumber</td>
+                    <td>@material.AddedByName</td>
+                    <td>@material.Timestamp</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

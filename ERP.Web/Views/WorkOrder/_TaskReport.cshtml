@@ -1,0 +1,36 @@
+﻿@model IEnumerable<WorkOrderTaskView>
+
+<table class="table table-responsive">
+    <thead>
+        <tr>
+
+            <th>Work Order Id</th>
+            <th>Invoice Item No</th>
+            <th>Item</th>
+            <th>Description</th>
+            <th>Employee</th>
+            <th>Assigned Date</th>
+            <th>Target Date</th>
+            <th>Completed Date</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var task in Model)
+        {
+        <tr class="TaskOverdue-@task.IsOverdue TaskInProgress-@(task.CompletedDate == null && task.IsOverdue == false)">
+
+            @*<td>@task.WorkOrderId</td>*@
+            <td><a href="@Url.Action("Details","WorkOrder", new { id = @task.WorkOrderId })">@task.WorkOrderId</a></td>
+            <td>@task.WorkOrderItemId</td>
+            <td>@task.Item</td>
+            <td>@task.Description</td>
+            <td>@task.EmployeeName</td>
+            <td>@task.Timestamp</td>
+            <td>@task.TargetDate</td>
+            <td>@task.CompletedDate</td>
+        </tr>
+        }
+
+    </tbody>
+</table>

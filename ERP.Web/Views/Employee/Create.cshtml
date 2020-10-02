@@ -1,0 +1,109 @@
+@model ERP.Models.Employee
+
+
+
+<form asp-action="Create" asp-controller="Employee" method="POST">
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>Add Employee</h2>
+    </div>
+    <div class="panel-body">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td> Enter the First Name : </td>
+                    <td>@Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", maxlength = "50" })</td>
+                    <td>
+                        @Html.ValidationMessageFor(m => m.FirstName, null, new { @class = "text-danger" })
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td> Enter the Last Name : </td>
+                    <td>@Html.TextBoxFor(m => m.LastName, new { @class = "form-control", maxlength = "50" })</td>
+                    <td>
+                        @Html.ValidationMessageFor(m => m.LastName, null, new { @class = "text-danger" })
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td> Enter the Date Of Birth : </td>
+                    <td>
+                        <!-- @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control", maxlength = "50" }) -->
+                        
+                        <!-- <input type="text" id="datepicker"  class="form-control"> -->
+                        <div class="form-group">
+                            <div class='input-group'>
+                                <input type='text' class="form-control datepicker" id="DateOfBirth" name="DateOfBirth" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        </td>
+                    <td>
+                        @Html.ValidationMessageFor(m => m.DateOfBirth, null, new { @class = "text-danger" })
+                    </td>
+                </tr>
+
+                <!-- <tr>
+                    <td> Enter the Gender: </td>
+                    <td>@Html.TextBoxFor(m => m.Gender, new { @class = "form-control", maxlength = "50" })</td>
+                    <td>
+                        @Html.ValidationMessageFor(m => m.Gender, null, new { @class = "text-danger" })
+                    </td>
+                </tr> -->
+
+                
+                <tr>
+                    <td> Mobile Number : </td>
+                    <td> <input type="text" id="MobileNo" name="MobileNo" class="form-control" maxlength="12"> </td>
+                </tr>
+
+                <tr>
+                    <td> Enter the Email Id: </td>
+                    <td> <input type="text" id="Email" name="Email" class="form-control" maxlength="40"> </td>
+                </tr>
+
+                <tr>
+                    <td> Enter the Address: </td>
+                    <td> <textarea id="Address" name="Address" class="form-control" maxlength="100"></textarea> </td>
+                </tr>
+
+                <tr>
+                    <td> Enter Start Date : </td>
+                    <td>
+                        <div class="form-group">
+                            <div class='input-group'>
+                                <input type='text' class="form-control datepicker" id="StartDate" name="StartDate" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        </td>
+                    <td>
+                        
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2"> <input type="Submit" value="Save" class="btn btn-success"> </td>
+                </tr>
+            </tbody>
+
+        </table>
+        @if (!String.IsNullOrEmpty(ViewBag.Error))
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+    </div>
+</div>
+
+
+</form>
+
+
+  

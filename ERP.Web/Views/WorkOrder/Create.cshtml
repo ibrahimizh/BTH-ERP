@@ -1,0 +1,163 @@
+﻿@model WorkOrder;
+
+
+<form asp-action="Create" asp-controller="WorkOrder" method="POST">
+    <div class="card shadow-lg p-3 mb-5 rounded">
+        <div class="card-header bgInfo1">
+            <h2 class="card-title">Create Work-Order</h2>
+        </div>
+        <div class="card-body">
+            <input type="hidden" asp-for="@Model.ProposalId" />
+            <div class="row">
+                <div class="col-md-8">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td> Title  : </td>
+                                <td> <input asp-for="@Model.Title" class="form-control" maxlength="45" /> </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    @*@await Component.InvokeAsync("Quote", new { id = @Model.ProposalId })*@
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <table id="tableInvoice" class="table" style="width:100%;">
+                                                <thead class="bgDefault">
+                                                    <tr class="bg-info text-white">
+                                                        
+                                                        <th style="width: 10%;"><h6>الرقم</h6><h6>SR. #</h6></th>
+                                                        <th style="width: 25%;">
+                                                            <h6>المادة</h6><h6>ITEMS</h6>
+                                                        </th>
+                                                        <th style="width: 35%;">
+                                                            <h6>البيان</h6><h6>SPECIFICATION</h6>
+                                                        </th>
+                                                        <th style="width: 10%;">
+                                                            <h6>الكمية</h6><h6>QTY</h6>
+                                                        </th>
+                                                        <th style="width: 10%;">
+                                                            <h6>سعر الوحدة</h6><h6>UNIT PRICE</h6>
+                                                        </th>
+                                                        <th style="width: 10%;">
+                                                            <h6>السعر الإجمالي</h6><h6>PRICE</h6>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="tbodyInvoice"></tbody>
+                                                <tfoot class="bgGrayPale font-weight-bold">
+                                                    <tr>
+                                                        <td colspan="5">Item Total</td>
+                                                        <td class="itemTotal">0.00</td>
+                                                    </tr>
+                                                    <tr class="text-danger">
+                                                        <td colspan="5">VAT (@Model.VAT%)</td>
+                                                        <td class="invoiceVAT">0.00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="5">Sub Total</td>
+                                                        <td class="invoiceSubTotal">0.00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="5">Discount</td>
+                                                        <td class="invoiceDiscount"></td>
+                                                    </tr>
+
+                                                    <tr class="bgGreenPale">
+                                                        <td colspan="5">Total</td>
+                                                        <td class="invoiceTotal">0.00</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> Target Date : </td>
+                                <td>
+                                    <div class="form-group">
+                                        <div class="input-group date datetimepicker" id="datetimepicker1" data-target-input="nearest">
+                                            <input type="text" asp-for="@Model.TargetDate" class="form-control datetimepicker-input" data-target="#datetimepicker1" />
+                                            <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> Invoiced Amount  : </td>
+                                <td> <input asp-for="@Model.InvoicedAmount" class="form-control" maxlength="7" /> </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"> <input type="Submit" value="Save" class="btn btn-success"> </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+                    <div class="text-danger" asp-validation-summary="All"></div>
+                    @if (!String.IsNullOrEmpty(ViewBag.Error))
+                    {
+                        <div class="alert alert-danger">@ViewBag.Error</div>
+                    }
+                    @if (!String.IsNullOrEmpty(ViewBag.Success))
+                    {
+                        <div class="alert alert-success">@ViewBag.Success</div>
+                    }
+                </div>
+                <div class="col-md-4">
+                    @await Component.InvokeAsync("Proposal", new { id = @Model.ProposalId })
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</form>
+
+
+@section Scripts{
+    <script type="text/javascript">
+            $(document).ready(function () {
+
+                getQuote();
+                var quoteItems = [];
+                function getQuote() {
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("GetQuote","Proposals")' + '/' +@Model.ProposalId
+                })
+                        .done(function (data) {
+                            // show the response
+                            if (data) {
+                                console.log(JSON.stringify(data));
+                                $('.tbodyInvoice').html('');
+                                let invoiceItemsHTML = '';
+                                for (i = 0; i < data.items.length; i++) {
+                                    let newQuoteItem = {
+                                        "id": data.items[i].id,
+                                        "proposalId": data.items[i].proposalId,
+                                        "lineNo": i + 1,
+                                        "item": data.items[i].item,
+                                        "specification": data.items[i].specification,
+                                        "quantity": data.items[i].quantity,
+                                        "unitPrice": data.items[i].unitPrice,
+                                        "lineTotal": data.items[i].quantity * data.items[i].unitPrice
+                                    };
+                                    quoteItems.push(newQuoteItem);
+                                    invoiceItemsHTML = invoiceItemsHTML + ("<tr><td>" + newQuoteItem.lineNo + "</td><td>" + newQuoteItem.item + "</td><td>" + newQuoteItem.specification + "</td><td>"+newQuoteItem.quantity + "</td><td>"+newQuoteItem.unitPrice + "</td><td>"+newQuoteItem.lineTotal + "</td></tr>");
+                                }
+                                $('.tbodyInvoice').html(invoiceItemsHTML);
+                                $(".itemTotal").html(data.subTotal);
+                                $(".invoiceSubTotal").html(data.subTotal + data.vat);
+                                $(".invoiceDiscount").html(data.discount);
+                                $(".invoiceVAT").html(data.vat);
+                                $(".invoiceTotal").html(data.total);
+                                $("#InvoicedAmount").val(data.total);
+                            }
+                        });
+                };
+            });
+    </script>
+}

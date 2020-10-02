@@ -1,0 +1,58 @@
+@model ERP.Models.Employee;
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>Employee Information</h2>
+        @Model.FirstName @Model.LastName
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-2">
+                Date of Birth
+            </div>
+            <div class="col-md-3">
+                @Model.DateOfBirth
+            </div>
+        </div>
+        <!-- <div class="row">
+            <div class="col-md-2">
+                Gender
+            </div>
+            <div class="col-md-3">
+                @Model.Gender
+            </div>
+        </div> -->
+        <div class="row">
+            <div class="col-md-2">
+                Mobile No
+            </div>
+            <div class="col-md-3">
+                @Model.MobileNo
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                Email
+            </div>
+            <div class="col-md-3">
+                @Model.Email
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                Address
+            </div>
+            <div class="col-md-3">
+                @Model.Address
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                Start Date
+            </div>
+            <div class="col-md-3">
+                @Model.StartDate
+            </div>
+        </div>
+    </div>
+</div>

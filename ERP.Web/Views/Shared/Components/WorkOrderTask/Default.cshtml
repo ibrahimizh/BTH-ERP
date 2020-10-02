@@ -1,0 +1,46 @@
+@model IEnumerable<WorkOrderTaskView>
+
+<div class="card text-white bgDark mb-3 shadow-lg rounded">
+    <!-- <div class="card-header bg-secondary">
+        <h2 class="card-title">Details</h2>
+    </div> -->
+    <div class="card-body bgWhite">
+        <div class="card-body bgWhite">
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Description</th>
+                    <th>Employee</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if(Model.Count()>0){
+            foreach (var task in Model)
+            {
+                <tr>
+                    <td>@task.Id</td>
+                
+                    <td>@task.Description</td>
+                
+                    <td>@task.EmployeeName</td>
+                
+                    <td>@task.StatusId</td>
+                
+                    <td>@task.Progress</td>
+                </tr>
+            }
+            }
+            else{
+                <tr>
+                    <td colspan="5">No Tasks Added</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+    </div>
+</div>

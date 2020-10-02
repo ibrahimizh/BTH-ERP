@@ -1,0 +1,64 @@
+@model ERP.Models.Views.ProposalViewModel
+
+<div class="card text-white bgDark mb-3 shadow-lg rounded">
+    <div class="card-header bg-secondary">
+        <h2 class="card-title">Details</h2>
+    </div>
+    <div class="card-body">
+        <table class="table table-condensed">
+            <tr>
+                <td><h4>Company Name</h4></td>
+                <td>@Model.Name</td>
+            </tr>
+            @*<tr>
+            <td><h4>Contact Person</h4></td>
+            <td>@Model.PointofContact</td>
+        </tr>*@
+            <tr>
+                <td><h4>Contact Mode</h4></td>
+                <td>@Model.ContactMode</td>
+            </tr>
+            <tr>
+                <td><h4>Date Time</h4></td>
+                <td>@Model.Timestamp</td>
+            </tr>
+            <tr>
+                <td><h4>Address</h4></td>
+                <td>@Model.Address</td>
+            </tr>
+            <tr>
+                <td><h4>Phone</h4></td>
+                <td>@Model.MobileNo</td>
+            </tr>
+            <tr>
+                <td><h4>Email</h4></td>
+                <td>@Model.EmailId</td>
+            </tr>
+            <tr>
+                <td><h4>Contact Name</h4></td>
+                <td>@Model.ContactName</td>
+            </tr>
+            <tr>
+                <td><h4>Contact Email</h4></td>
+                <td>@Model.ContactEmail</td>
+            </tr>
+            <tr>
+                <td><h4>Contact Phone</h4></td>
+                <td>@Model.ContactPhone</td>
+            </tr>
+            <tr>
+                <td><h4>Description</h4></td>
+                <td>@Model.Description</td>
+            </tr>
+            @if (!@Model.WorkOrderId.HasValue)
+            {
+                <tr>
+                    <td colspan="2">
+                        @Html.ActionLink("Create Work Order", "Create", "WorkOrder", new { id = @Model.Id }, new { @class = "btn btn-lg btn-success" })
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>

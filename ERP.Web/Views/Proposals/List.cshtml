@@ -1,0 +1,57 @@
+@model IEnumerable<ERP.Models.Views.ProposalViewModel>
+
+<div class="card text-white bg-info mb-3 shadow-lg rounded">
+    <div class="card-header bgInfo1">
+        <h2 class="card-title">Enquiries</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <tr class="bgInfo2">
+                        <th>Contact Person</th>
+                        <th>Contact Mode</th>
+                        <th>Date/Time</th>
+                        <th>Work Order</th>
+                    </tr>
+                    @foreach (var proposal in Model)
+                    {
+                        <tr>
+                            <td><a href="#" class="btn btn-warning lnkProposal" data-id="@proposal.Id">@proposal.Name  &nbsp; @proposal.PointofContact</a></td>
+                            <td>@proposal.ContactMode</td>
+                            <td>@proposal.Timestamp</td>
+                            <td>
+                                @if (proposal.WorkOrderId.HasValue)
+                                {
+                                    @Html.ActionLink("View", "Details", "WorkOrder", new { id = @proposal.WorkOrderId.Value }, new { @class = "btn bgDark" })
+                                }
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+            <div class="col-md-6">
+                <div id="divDetails">
+
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function(){
+            $(".lnkProposal").click(function(){
+                
+                var proposalId=$(this).data("id");
+                $.get('@Url.Action("Details","Proposals")?id='+proposalId, {}, function (response) {
+                    $("#divDetails").html(response);
+                });
+            });
+        });
+    </script>
+}

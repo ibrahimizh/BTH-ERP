@@ -1,0 +1,257 @@
+@model DraftPurchaseOrderVM
+<div class="card card-default">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-3">
+                <h3>Purchase Order Details</h3>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-success @ViewBag.ConfirmPOClass" id="btnConfirmPO" href="#">Confirm</a>
+                
+            </div>
+        </div>
+        
+        
+        
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Supplier</th>
+                    <th>Created On</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.DraftOrder.Id</td>
+                    <td>@Model.DraftOrder.SupplierName</td>
+                    <td>@Model.DraftOrder.CreatedDate</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<br />
+<div class="card card-default">
+
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-2">
+                <h3>Items</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Select Material</div>
+            <div class="col-md-4">
+                @*<select id="ddlMaterials" asp-items="@Model.Materials" class="form-control"></select>*@
+                <div class="form-group">
+                    <input id="autocomplete" class="form-control">
+                    <input id="selectedMaterial" type="hidden" />
+                    <input id="selectedMaterialName" type="hidden" />
+                </div>
+            </div>
+            <div class="col-md-2">Quantity</div>
+            <div class="col-md-2">
+                <input class="form-control" type="number" id="txtQuantity" required min="0.1" />
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary" id="btnAddItem">Add</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <table class="table table-bordered tablePOItems">
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Quantity</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model.DraftOrder.Items)
+                {
+                    <tr>
+                        <td>@item.MaterialName</td>
+                        <td>@item.OrderedQuantity</td>
+                        <td><button class="btn btn-danger deletePOItem" data-id='@item.Id'>Delete</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+    <div class="row"><p>&nbsp;</p></div>
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="bg-light">
+                        <th>Event Type</th>
+                        <th>Date/Time</th>
+                        <th>Added By</th>
+                    </tr>
+                </thead>
+                <tbody class="tbodyEvents"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            getEvents();
+            var materialsData = [];
+            bindMaterialsDropdown();
+            $("#autocomplete").autocomplete({                
+                source: materialsData,
+                select: function (event, ui) {
+                    $("#selectedMaterial").val(ui.item.id);
+                    $("#selectedMaterialName").val(ui.item.label);
+                    console.log(ui.item.id);
+                }
+                
+            });
+            function bindMaterialsDropdown() {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetMaterialsDropdown","Materials")'
+                })
+                    .done(function (data) {
+                        $.each(data, function (index, value) {
+                            //$("#ddlMaterials").append("<option value='" + value.value + "'>" + value.text + "</option>");
+                            materialsData.push({"label":value.text,"id":value.value});
+                        });
+                        
+                    });
+            }
+
+            $("#btnConfirmPO").click(function () {
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("Confirm")',
+                    data: JSON.stringify({Value:@Model.DraftOrder.Id}),
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                })
+                .done(function (data) {
+                    window.location.href = '@Url.Action("Confirmed",new{id=@Model.DraftOrder.Id})';
+                });
+            });
+
+        $("#btnAddItem").click(function(){
+            var materialId = $('#selectedMaterial').val();
+            var materialName = $("#selectedMaterialName").val();
+            if(materialId)
+            {
+                var quantity=$('#txtQuantity').val();
+
+                if(quantity){
+                    if(parseFloat(quantity)<0.1)
+                    {
+                        alert("Invalid Quantity!");
+                    }
+                    else{
+                        var newItem={
+                            "PurchaseOrderId":@Model.DraftOrder.Id,
+                            "MaterialId":materialId,
+                            "OrderedQuantity":quantity
+                        };
+                        
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("AddItem")', 
+                            data: JSON.stringify(newItem),
+                            dataType: 'json',
+                            contentType: "application/json; charset=utf-8",
+                        })
+                        .done(function(data){                
+                            // show the response
+                            if(data>0)
+                            {
+                                
+
+                                var addedItemText=materialName;
+                                var orderedItemQuantity=$('#txtQuantity').val();
+                                var markup = "<tr><td>"+addedItemText+"</td><td>"+orderedItemQuantity+"</td><td><button class='btn btn-danger deletePOItem' data-id='"+data+"'>Delete</button></td></tr>";
+                                $(".tablePOItems tbody").append(markup);
+                                $('#selectedMaterial').val('');
+                                $("#selectedMaterialName").val('');
+                                $("#autocomplete").val('');
+                                $('#txtQuantity').val(0);
+
+                                $("#btnConfirmPO").show();
+
+                            }
+                            
+                        })
+                        .fail(function() {            
+                            // just in case posting your form failed
+                            alert( "Error: Failed to add item!" );
+                            
+                        });
+                    }
+                }
+                else{
+                    alert("Enter Quantity!");
+                }
+            }
+            else{
+                alert("Select Item to add");
+            }
+        });
+
+
+        $(".tablePOItems").on('click', '.deletePOItem', function(){
+            var deleteButton=$(this);
+            var itemId=deleteButton.attr("data-id");
+            
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("RemoveItem","PurchaseOrder")'+'/'+itemId
+            })
+            .done(function(data){                
+                // show the response
+                if(data)
+                {
+                    deleteButton.closest('tr').remove();
+                    var rowCount = $('.tablePOItems tbody tr').length;
+                    if(rowCount===0){
+                       $("#btnConfirmPO").hide();
+                    }
+                }                
+            })
+            .fail(function() {            
+                // just in case posting your form failed
+                alert( "Error: Failed to delete item!" );
+                
+            });
+        });
+
+        function getEvents() {
+            
+            let url = '@Url.Action("GetEvents","PurchaseOrder")' + '/' +@Model.DraftOrder.Id;
+            console.log('Attempting to get events! '+url);
+            $.ajax({
+                    type: 'GET',
+                    url: url
+                })
+                .done(function (data) {
+                    // show the response
+                    console.log('events data'+JSON.stringify(data));
+                    $.each(data, function (index, value) {
+                            console.log('Events: ' + JSON.stringify(value));
+                            $('.tbodyEvents').append("<tr><td>" + value.eventType + "</td><td>" + value.timestamp +  "</td><td>" + value.addedBy + "</td></tr>");
+                            
+                        });
+                });
+        }
+    });
+    </script>
+}

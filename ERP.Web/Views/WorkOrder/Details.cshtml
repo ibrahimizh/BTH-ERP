@@ -1,0 +1,1424 @@
+﻿@model WorkOrderVM
+
+    <div class="modal" id="confirmModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirmation
+                </div>
+                <div class="modal-body">
+                    Are you sure to update the invoice?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btnYes" data-dismiss="modal">Yes</button>
+                    &nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-danger btnNo" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Print Modal -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Modal Heading</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div id="printDemo">
+                    <div class="printWrapper">
+                        <div class="printContent">
+                            <h2 class="heading">INVOICE إشعار دفع</h2>
+                            <table class="floatRight">
+                                <tr><td class="lblInvoiceCustomerName"></td><td>&nbsp;</td><td> : </td><td>&nbsp;</td><td class="textRight"> اسم العميل / Customer Name  </td></tr>
+                                <tr><td class="lblInvoiceAddress"></td><td>&nbsp;</td><td> : </td><td>&nbsp;</td><td class="textRight">العنوان / Address</td></tr>
+                                <tr><td>@DateTime.Now.ToShortDateString()</td><td>&nbsp;</td><td> : </td><td>&nbsp;</td><td class="textRight">التاريخ  / Date</td></tr>
+                                <tr><td>@Model.WorkOrderDetail.Id</td><td>&nbsp;</td><td> : </td><td>&nbsp;</td><td class="textRight">رقم الفاتورة /  Invoice number</td></tr>
+                                <tr><td class="lblInvoiceCustomerVAT"></td><td>&nbsp;</td><td> : </td><td>&nbsp;</td><td class="textRight">الرقم الضريبي للعميل / customer VAT  number</td></tr>
+                                <tr><td><label class="lblInvoiceCustomerPONumber">@Model.WorkOrderDetail.CustomerPONumber</label></td><td>&nbsp;</td><td> : </td><td>&nbsp;</td><td class="textRight">امر الشراء من العميل /customer PO number</td></tr>
+                                
+                            </table>
+                            <div class="clear">&nbsp;</div>
+
+                            <table class="tableItems fullWidth">
+                                <thead>
+                                    <tr>
+                                        @*<th class="tableCell"><h4>الرقم</h4><h4>&nbsp;SR.&nbsp;#&nbsp;</h4></th>
+                    <th class="tableCell"><h4>المادة</h4><h4>&nbsp;ITEMS&nbsp;</h4></th>
+                    <th class="tableCell"><h4>البيان</h4><h4>&nbsp;SPECIFICATION&nbsp;</h4></th>
+                    <th class="tableCell"><h4>الكمية</h4><h4>&nbsp;QTY&nbsp;</h4></th>
+                    <th class="tableCell"><h4>سعر&nbsp;الوحدة</h4><h4>&nbsp;UNIT&nbsp;PRICE&nbsp;</h4></th>
+                    <th class="tableCell"><h4>السعر&nbsp;الإجمالي</h4><h4>&nbsp;PRICE&nbsp;</h4></th>*@
+
+                                        <th class="tableCell">
+                                            <table class="fullWidth">
+                                                <tr><td>الرقم</td></tr>
+                                                <tr><td>SR.&nbsp;#</td></tr>
+                                            </table>
+                                        </th>
+                                        <th class="tableCell">
+                                            <table class="fullWidth">
+                                                <tr><td>المادة</td></tr>
+                                                <tr><td>ITEMS</td></tr>
+                                            </table>
+                                        </th>
+                                        <th class="tableCell">
+                                            <table class="fullWidth">
+                                                <tr><td>البيان</td></tr>
+                                                <tr><td>SPECIFICATION</td></tr>
+                                            </table>
+                                        </th>
+                                        <th class="tableCell">
+                                            <table class="fullWidth">
+                                                <tr><td>الكمية</td></tr>
+                                                <tr><td>QTY</td></tr>
+                                            </table>
+                                        </th>
+                                        <th class="tableCell">
+                                            <table class="fullWidth">
+                                                <tr><td>سعر&nbsp;الوحدة</td></tr>
+                                                <tr><td>UNIT&nbsp;PRICE</td></tr>
+                                            </table>
+                                        </th>
+                                        <th class="tableCell">
+                                            <table class="fullWidth">
+                                                <tr><td>السعر&nbsp;الإجمالي</td></tr>
+                                                <tr><td>PRICE</td></tr>
+                                            </table>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="printInvoiceBody" class="printInvoiceBody"></tbody>
+                            </table>
+                            <p>&nbsp;</p>
+                            <table>
+                                <tr><td>بث الخليجية للدعاية والإعلان</td></tr>
+                                <tr><td>BTH AL-KHALEJEYAH ADV. AGENCY</td></tr>
+                                <tr><td>VAT Reg. #:300458553900003</td></tr>
+                            </table>
+                        </div>
+                        @*<p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>*@
+                        <table class="fullWidth">
+                            <tbody>
+                                <tr>
+                                    <td class="textWhite">...................................</td>
+                                    <td class="textWhite">...................................</td>
+                                    <td>Sales</td>
+                                    <td class="textWhite">...................</td>
+                                    <td>Received By</td>
+                                </tr>
+                                <tr>
+                                    <td class="textWhite">....................................</td>
+                                    <td class="textWhite">....................................</td>
+                                    <td>__________________</td>
+                                    <td class="textWhite">...................</td>
+                                    <td>__________________</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="card mb-3 shadow-lg rounded">
+    <div class="card-header bg-info text-white">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="card-title">Work Order - @Model.WorkOrderDetail.Id</h4>
+            </div>
+        </div>
+
+        </div>
+    <div class="card-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-8">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#divWorkOrderDetails">Details</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="lnkBusinessPartner" class="nav-link" data-toggle="tab" href="#divBusinessPartner">Customer Information</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="lnkBusinessPartnerContact" class="nav-link" data-toggle="tab" href="#divBusinessPartnerContact">Contact Person</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="lnkInvoice" class="nav-link" data-toggle="tab" href="#divInvoice">Invoice</a>
+                        </li>
+                    </ul>
+
+                    <!-- *********************************************** -->
+                    <div class="tab-content">
+                        <div id="divWorkOrderDetails" class="tab-pane container active">
+
+                            <table class="table table-condensed">
+                                <tr>
+                                    <td><h6>Title</h6></td>
+                                    <td>@Model.WorkOrderDetail.Title</td>
+                                </tr>
+                                <tr>
+                                    <td><h6>Target Date</h6></td>
+                                    <td>@Model.WorkOrderDetail.TargetDate</td>
+                                </tr>
+                                @if (!String.IsNullOrEmpty(Model.WorkOrderDetail.Description))
+                                {
+                                    <tr>
+                                        <td><h6>Description</h6></td>
+                                        <td>@Model.WorkOrderDetail.Description</td>
+                                    </tr>
+                                }
+                                <tr>
+
+                                    <td colspan="2">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <table id="tableInvoiceView" class="table" style="width:100%;">
+                                                    <thead class="bgDefault">
+                                                        <tr>
+                                                            <th></th>
+                                                            <th style="width: 10%;"><h6>الرقم</h6><h6>ITEM NO</h6></th>
+                                                            <th style="width: 25%;">
+                                                                <h6>المادة</h6><h6>ITEMS</h6>
+                                                            </th>
+                                                            <th style="width: 35%;">
+                                                                <h6>البيان</h6><h6>SPECIFICATION</h6>
+                                                            </th>
+                                                            <th style="width: 10%;">
+                                                                <h6>الكمية</h6><h6>QTY</h6>
+                                                            </th>
+                                                            <th style="width: 10%;">
+                                                                <h6>سعر الوحدة</h6><h6>UNIT PRICE</h6>
+                                                            </th>
+                                                            <th style="width: 10%;">
+                                                                <h6>السعر الإجمالي</h6><h6>PRICE</h6>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="tbodyInvoiceView"></tbody>
+                                                    <tfoot class="bgGrayPale font-weight-bold">
+                                                        <tr>
+                                                            <td colspan="6">Item Total</td>
+                                                            <td class="itemTotalView">0.00</td>
+                                                        </tr>
+                                                        <tr class="text-danger">
+                                                            <td colspan="6">VAT (@Model.WorkOrderDetail.VAT%)</td>
+                                                            <td class="invoiceVATView">0.00</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="6">Sub Total</td>
+                                                            <td class="invoiceSubTotalView">0.00</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="6">Discount</td>
+                                                            <td class="invoiceDiscountView">0.00</td>
+                                                        </tr>
+
+                                                        <tr class="bgGreenPale">
+                                                            <td colspan="6">Total</td>
+                                                            <td class="invoiceTotalView">0.00</td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><h6>Invoiced Amount</h6></td>
+                                    <td class="tdInvoicedAmount"></td>
+                                </tr>
+                                <tr>
+                                    <td><h6>Paid Amount</h6></td>
+                                    <td><span id="lblPaidAmount">@Model.WorkOrderDetail.PaidAmount</span></td>
+                                </tr>
+                                <tr>
+                                    <td><h6>Balance Amount</h6></td>
+                                    <td class="tdBalanceAmount"></td>
+                                </tr>
+                                <tr>
+                                    <td><h6>Status</h6></td>
+                                    <td>
+                                        <!-- @if(Model.WorkOrderDetail.StatusId!=WorkOrderStatus.Completed)
+                {
+                <div class="row">
+                    <div class="col-md-6">
+                        <select id="ddlWOStatus" class="form-control" asp-items="Html.GetEnumSelectList<WorkOrderStatus>()"
+                asp-for="@Model.WorkOrderDetail.StatusId"></select>
+                    </div>
+                    <div class="col-md-6">
+                        <button id="btnUpdateWOStatus" class="btn btn-primary" type="button">Update</button>
+                    </div>
+                </div>
+                }
+                else{
+                    @Model.WorkOrderDetail.StatusId
+                } -->
+                                        <label>@Model.WorkOrderDetail.StatusId</label><span>&nbsp;&nbsp;&nbsp;</span>
+
+                                        @switch (Model.WorkOrderDetail.StatusId)
+                                        {
+                                            case WorkOrderStatus.Draft:
+                                                <button id="btnCreateWorkOrder" class="btn btn-primary">Create</button>
+                                                break;
+                                            case WorkOrderStatus.Created:
+                                                <button id="btnCompleteWorkOrder" class="btn btn-success">Complete</button>
+                                                break;
+
+                                        }
+
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div id="alertWOErrorMessage" class="alert alert-danger hide"></div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="row"><p>&nbsp;</p></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr class="bg-light">
+                                                <th>Event Type</th>
+                                                <th>Date/Time</th>
+                                                <th>Added By</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="tbodyEvents"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="divBusinessPartner" class="tab-pane container fade">
+                            <table id="tableBusinessPartner" class="table table-condensed">
+                                <tbody></tbody>
+
+                            </table>
+                        </div>
+                        <div id="divBusinessPartnerContact" class="tab-pane container fade">
+                            <table id="tableBusinessPartnerContact" class="table table-condensed">
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div id="divInvoice" class="tab-pane container fade">
+                            <p>&nbsp;</p>
+                            <section id="Invoice_Details">
+                                <div class="card">
+                                    <div class="card-header">
+                                        @if (Model.WorkOrderDetail.StatusId != WorkOrderStatus.Draft)
+                                        {
+                                            <button id="btnPrintModal" type="button" class="btn btn-success">
+                                                Print
+                                            </button>
+                                        }
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table id="tableInvoice" class="table" style="width:100%;">
+                                                        <thead class="bgDefault">
+                                                            <tr>
+                                                                <th></th>
+                                                                <th style="width: 10%;"><h6>الرقم</h6><h6>SR. #</h6></th>
+                                                                <th style="width: 25%;">
+                                                                    <h6>المادة</h6><h6>ITEMS</h6>
+                                                                </th>
+                                                                <th style="width: 35%;">
+                                                                    <h6>البيان</h6><h6>SPECIFICATION</h6>
+                                                                </th>
+                                                                <th style="width: 10%;">
+                                                                    <h6>الكمية</h6><h6>QTY</h6>
+                                                                </th>
+                                                                <th style="width: 10%;">
+                                                                    <h6>سعر الوحدة</h6><h6>UNIT PRICE</h6>
+                                                                </th>
+                                                                <th style="width: 10%;">
+                                                                    <h6>السعر الإجمالي</h6><h6>PRICE</h6>
+                                                                </th>
+                                                            </tr>
+                                                            <tr class="bgGrayPale">
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td><input type="text" class="form-control txtNewInvoiceItem" /><span class="text-danger rqdInvoiceItem hide">Required</span></td>
+                                                                <td><textarea class="form-control txtNewInvoiceSpecification"></textarea><span class="text-danger rqdInvoiceSpecification hide">Required</span></td>
+                                                                <td><input type="text" class="form-control txtNewInvoiceQuantity textBoxSmall" /><span class="text-danger rqdInvoiceQuantity hide">Required</span></td>
+                                                                <td><input type="text" class="form-control txtNewInvoiceUnitPrice textBoxMedium" /><span class="text-danger rqdInvoiceUnitPrice hide">Required</span></td>
+                                                                <td><button type="button" class="btn btn-info btnAddInvoiceItem">Add</button></td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="tbodyInvoice"></tbody>
+                                                        <tfoot class="bgGrayPale font-weight-bold">
+                                                            <tr>
+                                                                <td colspan="6">Item Total</td>
+                                                                <td class="itemTotal">0.00</td>
+                                                            </tr>
+                                                            <tr class="text-danger">
+                                                                <td colspan="6">VAT (@Model.WorkOrderDetail.VAT%)</td>
+                                                                <td class="invoiceVAT">0.00</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="6">Sub Total</td>
+                                                                <td class="invoiceSubTotal">0.00</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="6">Discount</td>
+                                                                <td><input type="number" class="form-control txtDiscountPrice textBoxMedium" /></td>
+                                                            </tr>
+
+                                                            <tr class="bgGreenPale">
+                                                                <td colspan="6">Total</td>
+                                                                <td class="invoiceTotal">0.00</td>
+                                                            </tr>
+                                                        </tfoot>
+                                                        @*<tfoot class="bgGrayPale font-weight-bold">
+            <tr>
+                <td colspan="5">Sub Total</td>
+                <td class="invoiceSubTotal">0.00</td>
+            </tr>
+            <tr>
+                <td colspan="5">Discount</td>
+
+                <td><input type="text" class="form-control txtDiscountPrice textBoxMedium" value="0.00" /></td>
+            </tr>
+            <tr class="text-danger">
+                <td colspan="5">VAT (5%)</td>
+                <td class="invoiceVAT">0.00</td>
+            </tr>
+            <tr class="bgGreenPale">
+                <td colspan="5">Total</td>
+                <td class="invoiceTotal">0.00</td>
+            </tr>
+        </tfoot>*@
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" class="btn btn-success btnUpdateInvoice">Save</button>
+                                        <div class="row updateSuccess hide">
+                                            <div class="alert alert-success">Quote updated !</div>
+                                        </div>
+                                        <p>&nbsp;</p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td><label>Customer PO Number<span class="text-danger">*</span> : </label></td>
+                                                <td><input type="text" class="form-control txtCustomerPONumber" value="@Model.WorkOrderDetail.CustomerPONumber" /></td>
+                                                <td><button type="button" class="btn btn-info btnSetCustomerPONumber">Update</button></td>
+                                                <td><label class="text-danger hide reqCustomerPONumber">Required</label></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+                            <p>&nbsp;</p>                            
+                        </div>
+                    </div>
+                    @if (Model.WorkOrderDetail.StatusId != WorkOrderStatus.Draft)
+                    {
+
+                        <div class="card mb-3 shadow-lg rounded">
+                            <div class="card-header">
+                                <h4 class="card-title">Tasks</h4>
+                            </div>
+                            <div class="card-body bgWhite">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-7">
+                                            <div class="row">
+                                                @if (Model.WorkOrderDetail.StatusId != WorkOrderStatus.Completed &&(User.Claims.Single(c => c.Type == "features").Value.Contains("22") || User.Claims.Single(c => c.Type == "role").Value == "admin"))
+                                                {
+                                                    <div class="col-md-3">
+                                                        <button class="btn btn-lg btn-success btnDisplayAddTask">Add Task</button>
+                                                    </div>
+                                                }
+                                                <div class="col-md-9">
+                                                    <div id="alertTaskSuccess" class="alert alert-success hide"></div>
+                                                </div>
+                                            </div>
+                                            <p>&nbsp;</p>
+
+                                            <div class="card text-white bgInfo1 mb-3 shadow-lg rounded hide divAddTask">
+
+                                                <div class="card-header bgInfo">
+                                                    <h4 class="card-title">Add New Task</h4>
+                                                </div>
+                                                <div class="card-body bgWhite">
+                                                    <div class="container-fluid">
+                                                        <table class="table table-condensed">
+                                                            <tr>
+                                                                <td>Select Item</td>
+                                                                <td>
+                                                                    <ul class="itemsListAddTask" style="list-style-type:none;">
+                                                                        
+                                                                    </ul>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Assign Employee</td>
+                                                                <td>
+                                                                    <select id="ddlEmployee" asp-for="@Model.CreateTaskVM.EmployeeId"
+                                                                            asp-items="@Model.CreateTaskVM.Employees"
+                                                                            class="form-control"></select>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Description</td>
+                                                                <td><textarea id="txtDescription" asp-for="@Model.CreateTaskVM.Description" class="form-control"></textarea></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Target Date</td>
+                                                                <td>
+                                                                    <div class="form-group">
+                                                                        <div class="input-group date datetimepicker" id="datetimepicker1" data-target-input="nearest">
+                                                                            <input type="text" id="targetDate" name="targetDate" class="form-control datetimepicker-input" data-target="#datetimepicker1" />
+                                                                            <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><button id="btnAddTask" class="btn btn-success">Submit</button></td>
+                                                                <td><button id="btnCancelTask" class="btnCancelAddTask btn btn-default">Cancel</button></td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="divTasksList">
+
+                                            </div>
+
+
+                                        </div>
+                                        <div id="divTaskDetails" class="col-md-5">
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                    }
+                    <!-- *********************************************** -->
+                </div>
+
+                <div class="col-lg-4">
+                    @if (Model.WorkOrderDetail.StatusId != WorkOrderStatus.Draft)
+                    {
+                        <div id="divCustomerPayments" class="container-fluid">
+
+                            <div class="card mb-3 shadow-lg rounded bg-light">
+                                <div class="card-header bgInfo1 text-light">
+                                    <h4>CustomerPayments</h4>                                    
+                                </div>
+                                <div class="card-body">
+                                    @if (Model.WorkOrderDetail.PaidAmount != Model.WorkOrderDetail.InvoicedAmount &&(User.Claims.Single(c => c.Type == "features").Value.Contains("24") || User.Claims.Single(c => c.Type == "role").Value == "admin"))
+                                    {
+                                        <div class="form-group">
+                                            <label>Payment Menthod</label>
+                                            <select id="ddlPaymentOptions" class="form-control">
+                                                <option value='1'>Cash</option>
+                                                <option value='2'>Cheque</option>
+                                                <option value='3'>BankTransfer</option>
+                                                <option value='4'>PointOfSale</option>
+                                            </select>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Amount</label>
+                                            <input id="txtCustomerPaymentAmount" type="number" class="form-control" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Receipt Number</label>
+                                            <input id="txtCustomerPaymentReceiptNumber" type="text" class="form-control" />
+                                        </div>
+                                        <div class="form-group">
+                                            <input id="btnAddCustomerPayment" type="button" class="btn btn-success" value="Save">
+                                        </div>
+                                    }
+                                    <table class="table tableCustomerPayments">
+                                        <thead>
+                                            <tr>
+                                                <th>Date/Time</th>
+                                                <th>Amount</th>
+                                                <th>Method</th>
+                                                <th>Receipt Number</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyCustomerPayments"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div id="divMaterials" class="container-fluid">
+
+                            <div class="card mb-3 shadow-lg rounded bg-light">
+                                <div class="card-header bgInfo1 text-light">
+                                    <h4>Materials Usage</h4>                                    
+                                </div>
+                                <div class="card-body">
+                                    @if (Model.WorkOrderDetail.StatusId != WorkOrderStatus.Completed &&(User.Claims.Single(c => c.Type == "features").Value.Contains("27") || User.Claims.Single(c => c.Type == "role").Value == "admin"))
+                                    {
+                                        @*<div class="form-group">
+                                            <label>Material</label>
+                                            <select id="ddlMaterials" class="form-control"></select>
+                                        </div>*@
+                                        <div class="form-group">
+                                            <label for="autocomplete">Select Material: </label>
+                                            <input id="autocomplete" class="form-control">
+                                            <input id="selectedMaterial" type="hidden" />
+                                            <input id="selectedMaterialName" type="hidden" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Units used</label>
+                                            <input id="txtUnits" type="number" class="form-control" />
+                                        </div>
+                                        <div class="form-group">
+                                            <input id="btnAddMaterialUsage" type="button" class="btn btn-success" value="Save">
+                                        </div>
+                                        <div id="divAddMaterialsErrorMessage"></div>
+                                        
+                                    }
+                                    <table class="table tableMaterialsUse">
+                                        <thead>
+                                            <tr>
+                                                <th>Material</th>
+                                                <th>Units</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyMaterialsUse"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            getTasks();
+            getMaterials();
+            getPayments();
+            bindMaterialsDropdown();
+            getBusinessPartnerDetails();
+            getInvoice();
+            getEvents();
+            var discountPrice = 0;
+            $("#btnPrintModal").click(function () {
+                printInvoice();
+
+                $.ajax({
+                type: 'POST',
+                url: '@Url.Action("LogPrintEvent",new { id=Model.WorkOrderDetail.Id})',
+                contentType: "application/json;"
+            })
+                .done(function (data) {
+                    console.log("Print Event Result: " + JSON.stringify(data));
+                });
+
+            });
+
+            function printInvoice() {
+                printJS({ printable: 'printDemo', type: 'html', style: '.printContent{min-height:700px !important;}.floatRight{text-align:right !important;}.tableItems{text-align:center !important;}th{-webkit-print-color-adjust: exact;background-color:#EAEAEA;text-align:center !important;}.text-blue{color:blue;}.text-red{color:red;}.textWhite{color:transparent;}.tableItems{border-collapse: collapse;}.tableCell{border:2px solid black;padding:1px !important;}.centerHeading{width:200px;margin-left:auto;margin-right:auto;}.fullWidth{width:100% !important;}.printWrapper{padding-top:100px;}.heading{width:150px;text-align:center;color:black;border-bottom:3px solid black;padding-bottom:5px;margin-left:200px;margin-right:200px;}.clear{clear:both !important;}.floatRight{float:right;clear:both;}.textRight{text-align:right;}' });
+
+            }
+            var materialsData = [];
+            $("#autocomplete").autocomplete({                
+                source: materialsData,
+                select: function (event, ui) {
+                    $("#selectedMaterial").val(ui.item.id);
+                    $("#selectedMaterialName").val(ui.item.label);
+                    console.log(ui.item.id);
+                }
+                
+            });
+            function bindMaterialsDropdown() {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetMaterialsDropdown","Materials")'
+                })
+                    .done(function (data) {
+                        $.each(data, function (index, value) {
+                            //$("#ddlMaterials").append("<option value='" + value.value + "'>" + value.text + "</option>");
+                            materialsData.push({"label":value.text,"id":value.value});
+                        });
+                        
+                    });
+            }
+
+
+
+            function getTasks() {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetTasks","WorkOrder")' + '/' +@Model.WorkOrderDetail.Id
+                })
+                    .done(function (data) {
+                        // show the response
+                        if (data) {
+                            $("#divTasksList").html(data);
+                        }
+                    });
+            }
+
+
+            function getMaterials() {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetMaterials","WorkOrder")' + '/' +@Model.WorkOrderDetail.Id
+                })
+                    .done(function (data) {
+                        // show the response
+                        if (data) {
+                            $.each(data, function (index, value) {
+                                console.log('Materials Used: ' + JSON.stringify(value));
+                                $('#tbodyMaterialsUse').append("<tr><td>" + value.material + "</td><td>" + value.units + "</td></tr>");
+                                $('.tableMaterialsUse').show();
+                            });
+                        } if (data.length === 0)  {
+                            console.log('No materials used');
+                            $('.tableMaterialsUse').hide();
+                        }
+                    });
+            }
+
+
+            function getPayments() {
+                console.log('getting payments');
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetCustomerPayments","WorkOrder")' + '/' +@Model.WorkOrderDetail.Id
+                })
+                    .done(function (data) {
+                        // show the response
+                        console.log('payments data'+JSON.stringify(data));
+                        if (data) {
+                            $.each(data, function (index, value) {
+                                console.log('Payments: ' + JSON.stringify(value));
+                                $('#tbodyCustomerPayments').append("<tr><td>" + value.timestamp + "</td><td>" + value.amount + "</td><td>" + value.paymentTypeId + "</td><td>" + value.receiptNumber + "</td></tr>");
+                                $('.tableCustomerPayments').show();
+                            });
+                        }
+                        if (data.length === 0) {
+                            console.log('no payments');
+                            $('.tableCustomerPayments').hide();
+                        }
+                    });
+            }
+
+            function getBusinessPartnerDetails() {
+                let businessPartnerId =@Model.WorkOrderDetail.BusinessPartnerId+0;
+                if (businessPartnerId > 0) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("GetBusinessPartnerById","Proposals")' + '/' + businessPartnerId
+                    })
+                        .done(function (data) {
+                            if (data) {
+                                console.log(JSON.stringify(data));
+                                $('#tableBusinessPartner tbody').append("<tr><td><h4>Name</h4></td><td>" + data.name + "</td></tr>")
+                                    .append("<tr><td><h4>Address</h4></td><td>" + data.address + "</td></tr>")
+                                    .append("<tr><td><h4>Email</h4></td><td>" + data.emailId + "</td></tr>")
+                                    .append("<tr><td><h4>Phone</h4></td><td>" + data.mobileNo + "</td></tr>");
+
+                                //Set Invoice Data
+                                $('.lblInvoiceCustomerName').html(data.name);
+                                $('.lblInvoiceAddress').html(data.address);
+                                $('.lblInvoiceCustomerVAT').html(data.vatNo);
+                                
+                                let partnerContactId =@Model.WorkOrderDetail.BusinessPartnerContactId +0;
+                                if (partnerContactId === 0) { $('#divBusinessPartnerContact').html('<div class="alert alert-warning">No Contacts added!</div>'); }
+                                else {
+                                    for (i = 0; i < data.contacts.length; i++) {
+                                        if (data.contacts[i].id === partnerContactId) {
+                                            $('#tableBusinessPartnerContact tbody').append("<tr><td><h4>Name</h4></td><td>" + data.contacts[i].name + "</td></tr>")
+                                                .append("<tr><td><h4>Email</h4></td><td>" + data.contacts[i].email + "</td></tr>")
+                                                .append("<tr><td><h4>Phone</h4></td><td>" + data.contacts[i].contactNo + "</td></tr>");
+                                        }
+                                    }
+                                }
+
+                            }
+                        });
+                }
+
+            };
+
+
+            //*********************INVOICE***********************************************
+
+            //Add Invoice Item()
+            $(".btnAddInvoiceItem").on("click", function () {
+                let invoiceAddValidation = true;
+                let valInvoiceItem = $(".txtNewInvoiceItem").val().trim();
+                let valInvoiceSpecification = $(".txtNewInvoiceSpecification").val().trim();
+                let valInvoiceQuantity = $(".txtNewInvoiceQuantity").val().trim();
+                let valInvoiceUnitPrice = $(".txtNewInvoiceUnitPrice").val().trim();
+                $('.rqdInvoiceItem').hide();
+                $('.rqdInvoiceSpecification').hide();
+                $('.rqdInvoiceQuantity').hide();
+                $('.rqdInvoiceUnitPrice').hide();
+                if (valInvoiceItem === '') {
+                    $('.rqdInvoiceItem').show();
+                    invoiceAddValidation = false;
+                }
+                if (!valInvoiceSpecification) {
+                    $('.rqdInvoiceSpecification').show();
+                    invoiceAddValidation = false;
+                }
+                if (!valInvoiceQuantity) {
+                    $('.rqdInvoiceQuantity').show();
+                    invoiceAddValidation = false;
+                }
+                if (!valInvoiceUnitPrice) {
+                    $('.rqdInvoiceUnitPrice').show();
+                    invoiceAddValidation = false;
+                }
+
+
+                if (invoiceAddValidation) {
+                    
+                    
+
+                    console.log('valInvoiceUnitPrice: ' + valInvoiceUnitPrice);
+
+
+                    var newInvoiceItem = {
+                        "id":0,
+                        "lineNo":invoiceItems.length+1,
+                        "workOrderId":@Model.WorkOrderDetail.Id,
+                        "item": valInvoiceItem,
+                        "specification": valInvoiceSpecification,
+                        "quantity": valInvoiceQuantity,
+                        "unitPrice": valInvoiceUnitPrice,
+                        "lineTotal": valInvoiceQuantity * valInvoiceUnitPrice,
+                    };
+                    invoiceItems.push(newInvoiceItem);
+                    $('.tbodyInvoice').append("<tr><td><button type='button' class='btn-link text-danger btnDeleteInvoiceItem' data-lineNo='" + newInvoiceItem.lineNo + "'>X</button></td><td>" + newInvoiceItem.lineNo + "</td><td><input type='text' class='form-control txtInvoiceItem' value='" + newInvoiceItem.item + "' /></td><td><input type='text' class='form-control txtInvoiceSpec' value='" + newInvoiceItem.specification + "' /></td><td><input type='text' class='form-control txtInvoiceQty txtInvoiceQty" + newInvoiceItem.lineNo + "' data-lineNo='" + newInvoiceItem.lineNo + "' value='" + newInvoiceItem.quantity + "' /></td><td><input type='text' class='form-control txtInvoiceUnitPrice txtInvoiceUnitPrice" + newInvoiceItem.lineNo + "' data-lineNo='" + newInvoiceItem.lineNo + "' value='" + newInvoiceItem.unitPrice + "' /></td><td><label id='lblLineTotal" + newInvoiceItem.lineNo + "' >" + newInvoiceItem.lineTotal + "</label></td></tr>");
+
+                    let updated_total = parseFloat($(".itemTotal").html()) + newInvoiceItem.lineTotal;
+                    $(".itemTotal").html(updated_total.toFixed(2));
+                    let updated_vat=(updated_total*@Model.WorkOrderDetail.VAT) / 100;
+                $(".invoiceVAT").html(updated_vat.toFixed(2));
+                $(".invoiceSubTotal").html((updated_total).toFixed(2));
+                $(".invoiceTotal").html(((updated_total + updated_vat) - parseFloat($(".txtDiscountPrice").val())).toFixed(2));
+                
+
+                    resetAddInvoice();
+                    }
+            });           
+
+            //Reset Add Invoice()
+            function resetAddInvoice() {
+                $(".txtNewInvoiceItem").val('');
+                $(".txtNewInvoiceSpecification").val('');
+                $(".txtNewInvoiceQuantity").val('');
+                $(".txtNewInvoiceUnitPrice").val('');
+
+                //calculateInvoiceTotal();
+
+            }
+            var invoiceItems = [];
+            var invoiceDeletedItems = [];
+
+            //Get Invoice()
+            function getInvoice() {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetInvoice","WorkOrder")' + '/' +@Model.WorkOrderDetail.Id
+                })
+                    .done(function (data) {
+                        // show the response
+                        if (data) {
+                            console.log(JSON.stringify(data));
+                            $('.tbodyInvoice').html('');
+                            $('.tbodyInvoiceView').html('');
+                            let invoiceItemsHTML = '';
+                            let invoiceItemsViewHTML = '';
+                            for (i = 0; i < data.items.length; i++) {
+                                let newInvoiceItem = {
+                                    "id":data.items[i].id,
+                                    "workOrderId":data.items[i].workOrderId,
+                                    "lineNo":i+1,
+                                    "item": data.items[i].item,
+                                    "specification": data.items[i].specification,
+                                    "quantity": data.items[i].quantity,
+                                    "unitPrice": data.items[i].unitPrice,
+                                    "lineTotal": data.items[i].quantity*data.items[i].unitPrice
+                                };
+                                invoiceItems.push(newInvoiceItem);
+                                //invoiceItemsHTML = invoiceItemsHTML + ("<tr><td><button type='button' class='btn-link text-danger btnDeleteInvoiceItem' data-lineNo='" + newInvoiceItem.lineNo + "'>X</button></td><td>" + newInvoiceItem.lineNo + "</td><td><input type='text' class='form-control txtInvoiceItem' value='" + newInvoiceItem.item + "' /></td><td><input type='text' class='form-control txtInvoiceSpec' value='" + newInvoiceItem.specification + "' /></td><td><input type='text' class='form-control txtInvoiceQty txtInvoiceQty" + newInvoiceItem.lineNo + "' data-lineNo='" + newInvoiceItem.lineNo + "' value='" + newInvoiceItem.quantity + "' /></td><td><input type='text' class='form-control txtInvoiceUnitPrice txtInvoiceUnitPrice" + newInvoiceItem.lineNo + "' data-lineNo='" + newInvoiceItem.lineNo + "' value='" + newInvoiceItem.unitPrice + "' /></td><td><label id='lblLineTotal" + newInvoiceItem.lineNo + "' >" + newInvoiceItem.lineTotal + "</label></td></tr>");
+                                //invoiceItemsViewHTML=invoiceItemsViewHTML+("<tr><td></td><td>" + newInvoiceItem.lineNo + "</td><td>" + newInvoiceItem.item + "</td><td>" + newInvoiceItem.specification + "</td><td>" + newInvoiceItem.quantity + "</td><td>" + newInvoiceItem.unitPrice + "</td><td>" + newInvoiceItem.lineTotal + "</td></tr>");
+                            }
+
+                            //$('.tbodyInvoice').html(invoiceItemsHTML);
+                            //$('.tbodyInvoiceView').html(invoiceItemsViewHTML);
+                            discountPrice = data.discount;
+                            populateInvoiceItems();
+                            $(".itemTotalView").html(data.subTotal.toFixed(2));
+                            $(".invoiceSubTotalView").html((data.subTotal+data.vat).toFixed(2));
+                            $(".txtDiscountPriceView").val(data.discount.toFixed(2));
+                            $(".invoiceVATView").html(data.vat.toFixed(2));
+                            $(".invoiceTotalView").html(data.total.toFixed(2));
+                            $(".invoiceDiscountView").html(data.discount.toFixed(2));
+
+                            printInvoiceModel.items = invoiceItems;
+                            printInvoiceModel.lineTotal = data.subTotal.toFixed(2);
+                            printInvoiceModel.subTotal = (data.subTotal).toFixed(2);
+                            printInvoiceModel.discount = data.discount.toFixed(2);
+                            printInvoiceModel.vat = data.vat.toFixed(2);
+                            printInvoiceModel.total = ((data.subTotal+data.vat) - data.discount).toFixed(2);
+
+                            setInvoiceDataForPrint(printInvoiceModel);
+
+                            $(".tdInvoicedAmount").html(printInvoiceModel.total);
+                            let paidAmount = @Model.WorkOrderDetail.PaidAmount;
+                            $(".tdBalanceAmount").html((parseFloat(printInvoiceModel.total)-parseFloat(paidAmount)).toFixed(2));
+                        }
+                    });
+            }
+
+            function setInvoiceDataForPrint(data) {
+                
+                let printTableData = '';
+                for (i = 0; i < data.items.length; i++) {
+                                printTableData=printTableData+("<tr><td class='tableCell'>" + (parseInt(i) + 1) + "</td><td class='tableCell'>" + data.items[i].item + "</td><td class='tableCell'>" + data.items[i].specification + "</td><td class='tableCell'>" + data.items[i].quantity + "</td><td class='tableCell'>" + data.items[i].unitPrice + "</td><td class='tableCell'>" + data.items[i].lineTotal + "</td></tr>");                            
+                                
+                }
+                $('#printInvoiceBody').html(printTableData);
+                $('#printInvoiceBody').append("<tfoot>");
+                $('#printInvoiceBody').append("<tr><td colspan='4'>&nbsp;</td><td>Sub Total</td><td class='tableCell'>"+data.subTotal+"</td> </tr>");
+                if (parseFloat(data.discount) > 0) {
+                    $('.printInvoiceBody').append('<tr><td colspan="4">&nbsp;</td><td>Discount</td><td class="tableCell">' + data.discount + '</td></tr>');
+                }
+                $('#printInvoiceBody').append('<tr class="text-blue"><td colspan="4">&nbsp;</td><td>VAT ('+@Model.WorkOrderDetail.VAT+'%)</td><td class="tableCell">'+data.vat+'</td></tr>');
+                $('#printInvoiceBody').append('<tr class="text-red"><td colspan="4">&nbsp;</td><td>Total</td><td class="tableCell">'+data.total+'</td></tr>');
+                $('#printInvoiceBody').append("</tfoot>");
+            }
+            var printInvoiceModel = {
+                "items": [],
+                "lineTotal":0,
+                        "subTotal":0,
+                        "discount":0,
+                        "vat":0,
+                        "total":0
+            };
+            function calculateInvoiceTotal() {
+                let itemTotal = 0;
+                invoiceItems.forEach(function (item) {
+                  itemTotal += item.lineTotal;
+                });
+                
+                let vatAmount = (itemTotal*@Model.WorkOrderDetail.VAT) / 100;
+                
+                //let discount=$(".txtDiscountPrice").val();
+                let discount = discountPrice;
+                
+                //printInvoiceModel.lineTotal = itemTotal.toFixed(2);
+                //printInvoiceModel.subTotal = (itemTotal+vatAmount).toFixed(2);
+                //printInvoiceModel.discount = discount;
+                //printInvoiceModel.vat = vatAmount.toFixed(2);
+                //printInvoiceModel.total = ((itemTotal + vatAmount) - discount).toFixed(2);
+                
+
+
+                $(".txtDiscountPrice").val(discountPrice);
+                $(".itemTotal").html(itemTotal.toFixed(2));
+                $(".invoiceVAT").html(vatAmount.toFixed(2));
+                $(".invoiceSubTotal").html((itemTotal + vatAmount).toFixed(2));
+                $(".invoiceTotal").html(((itemTotal + vatAmount) - discount).toFixed(2));
+                $(".invoiceDiscount").html(discount);
+
+        }
+        function populateInvoiceItems() {
+            $('.tbodyInvoice').html('');
+            $('.tbodyInvoiceView').html('');
+            $('.itemsListAddTask').html('');
+            invoiceItems.forEach(function (newInvoiceItem) {
+                $('.tbodyInvoice').append("<tr><td><button type='button' class='btn-link text-danger btnDeleteInvoiceItem' data-lineNo='" + newInvoiceItem.lineNo + "'>X</button></td><td>" + newInvoiceItem.lineNo + "</td><td><input type='text' class='form-control txtInvoiceItem' data-lineNo='"+  newInvoiceItem.lineNo + "' value='" + newInvoiceItem.item + "' /></td><td><input type='text' class='form-control txtInvoiceSpec' data-lineNo='"+  newInvoiceItem.lineNo + "' value='" + newInvoiceItem.specification + "' /></td><td><input type='text' class='form-control txtInvoiceQty txtInvoiceQty" + newInvoiceItem.lineNo + "' data-lineNo='" + newInvoiceItem.lineNo + "' value='" + newInvoiceItem.quantity + "' /></td><td><input type='text' class='form-control txtInvoiceUnitPrice txtInvoiceUnitPrice" + newInvoiceItem.lineNo + "' data-lineNo='" + newInvoiceItem.lineNo + "' value='" + newInvoiceItem.unitPrice + "' /></td><td><label id='lblLineTotal" + newInvoiceItem.lineNo + "' >" + newInvoiceItem.lineTotal + "</label></td></tr>");
+                $('.tbodyInvoiceView').append("<tr><td></td><td>" + newInvoiceItem.id + "</td><td>" + newInvoiceItem.item + "</td><td>" + newInvoiceItem.specification + "</td><td>" + newInvoiceItem.quantity + "</td><td>" + newInvoiceItem.unitPrice + "</td><td>" + newInvoiceItem.lineTotal + "</td></tr>");
+                $('.itemsListAddTask').append("<li><input type='radio' name='itemsList' value="+newInvoiceItem.id+" />"+newInvoiceItem.id+" - "+newInvoiceItem.item+" </li>");
+            });
+            calculateInvoiceTotal();
+            //printInvoiceModel.items = invoiceItems;
+            //setInvoiceDataForPrint(printInvoiceModel);
+
+            
+            
+        }
+        $("#divInvoice").on("click", ".btnDeleteInvoiceItem", function(){
+            let deletedLineNo = $(this).data('lineno');
+            invoiceDeletedItems.push(invoiceItems[deletedLineNo - 1]);
+            invoiceItems.splice(deletedLineNo - 1, 1);
+            $('.tbodyInvoice').html('');
+            invoiceItems.forEach(function (newInvoiceItem) {
+                $('.tbodyInvoice').append("<tr><td><button type='button' class='btn-link text-danger btnDeleteInvoiceItem' data-lineNo='" + newInvoiceItem.lineNo + "'>X</button></td><td>" + newInvoiceItem.lineNo + "</td><td><input type='text' class='form-control txtInvoiceItem' data-lineNo='"+  newInvoiceItem.lineNo + "' value='" + newInvoiceItem.item + "' /></td><td><input type='text' class='form-control txtInvoiceSpec' data-lineNo='"+  newInvoiceItem.lineNo + "' value='" + newInvoiceItem.specification + "' /></td><td><input type='text' class='form-control txtInvoiceQty txtInvoiceQty" + newInvoiceItem.lineNo + "' data-lineNo='" + newInvoiceItem.lineNo + "' value='" + newInvoiceItem.quantity + "' /></td><td><input type='text' class='form-control txtInvoiceUnitPrice txtInvoiceUnitPrice" + newInvoiceItem.lineNo + "' data-lineNo='" + newInvoiceItem.lineNo + "' value='" + newInvoiceItem.unitPrice + "' /></td><td><label id='lblLineTotal" + newInvoiceItem.lineNo + "' >" + newInvoiceItem.lineTotal + "</label></td></tr>");
+            });
+            calculateInvoiceTotal();
+        });
+        $("#divInvoice").on("focusout", ".txtInvoiceQty", function(){
+
+            let editedLineNo = $(this).data('lineno');
+            let qty = $(this).val();
+            let price = $('.txtInvoiceUnitPrice' + editedLineNo).val();
+            $('#lblLineTotal' + editedLineNo).text(price * qty);
+            invoiceItems[editedLineNo - 1].quantity = qty;
+            invoiceItems[editedLineNo - 1].lineTotal = price * qty;
+            calculateInvoiceTotal();
+        });
+        $("#divInvoice").on("focusout", ".txtInvoiceUnitPrice", function(){
+
+            let editedLineNo = $(this).data('lineno');
+            let price = $(this).val();
+            let qty = $('.txtInvoiceQty' + editedLineNo).val();
+            $('#lblLineTotal' + editedLineNo).text(price * qty);
+            invoiceItems[editedLineNo - 1].unitPrice = price;
+            invoiceItems[editedLineNo - 1].lineTotal = price * qty;
+
+            console.log("editedLineNo: " +editedLineNo);
+            console.log("price: " +price);
+            console.log("qty: "+qty);
+
+            calculateInvoiceTotal();
+        });
+        $("#divInvoice").on("focusout", ".txtDiscountPrice", function(){
+
+            discountPrice = $(".txtDiscountPrice").val();
+            calculateInvoiceTotal();
+        });
+        $("#divInvoice").on("focusout", ".txtInvoiceItem", function(){
+
+            let editedLineNo = $(this).data('lineno');
+            let newItemText = $(this).val();
+            invoiceItems[editedLineNo - 1].item = newItemText;
+        });
+        $("#divInvoice").on("focusout", ".txtInvoiceSpec", function(){
+
+            let editedLineNo = $(this).data('lineno');
+            let newItemSpec = $(this).val();
+            invoiceItems[editedLineNo - 1].specification = newItemSpec;
+        });
+        $(".btnYes").click(function () {
+            
+            $("#confirmModal").fadeOut();
+            updateInvoice();
+        });
+        $(".btnNo").click(function () {
+            
+            $("#confirmModal").fadeOut();
+        });
+        $(".btnUpdateInvoice").click(function () {
+            console.log("calling confirm modal");
+            $("#confirmModal").fadeIn();
+            console.log("done calling confirm modal");
+        });
+        function updateInvoice() {
+                    var updateInvoiceModel = {
+                "items": invoiceItems,
+                "deletedItems":invoiceDeletedItems,
+                "discount": $(".txtDiscountPrice").val(),
+                        "totalAmount": $(".invoiceTotal").html()                        
+            };
+            console.log("JSON obj : " + JSON.stringify(updateInvoiceModel));
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UpdateInvoice")',
+                data: JSON.stringify(updateInvoiceModel),
+                contentType: "application/json;"
+            })
+                .done(function (data) {
+                    // show the response
+                    if (data) {
+                        //printInvoiceModel.items = invoiceItems;
+                        //setInvoiceDataForPrint(printInvoiceModel);
+                        populateInvoiceItems();
+                        $(".updateSuccess").fadeIn().delay(2000).fadeOut();
+                        }
+                        location.reload();
+
+                });
+        }
+
+
+
+
+
+            @*$(".btnApplyDiscount").on("click",function(){
+                var discountModel={
+                    "workOrderId":@Model.WorkOrderDetail.Id,
+                    "discount":$(".txtDiscountPrice").val()
+                };
+
+                $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("ApplyDiscount")',
+                        data: JSON.stringify(discountModel),
+                        contentType: "application/json;"
+                    })
+                    .done(function(data){
+                        let subTotal = $(".invoiceSubTotal").html();
+                        //var discountedTotal = parseFloat(subTotal) - parseFloat(discountModel.discount);
+                        //let vat = (discountedTotal * 5) / 100;
+                        //let total = discountedTotal + vat;
+                        
+                        let vat = (subTotal * 5) / 100;
+                        let total = subTotal + vat;
+                        let discountedTotal = parseFloat(total) - parseFloat(discountModel.discount);
+
+                        $(".invoiceVAT").html(vat);
+                        $(".invoiceTotal").html(discountedTotal);
+                    });
+            });*@
+
+            $(".btnSetCustomerPONumber").on("click", function () {
+                $('.reqCustomerPONumber').hide();
+                var customerPONumber = $(".txtCustomerPONumber").val();
+                var customerPONumberModel={
+                    "workOrderId":@Model.WorkOrderDetail.Id,
+                    "CustomerPONumber":customerPONumber
+                };
+                
+                if ($.trim(customerPONumber).length === 0) {
+                    $('.reqCustomerPONumber').show();
+                } else {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("SetCustomerPONumber")',
+                        data: JSON.stringify(customerPONumberModel),
+                        contentType: "application/json;"
+                    })
+                        .done(function (data) {
+                            $('.lblInvoiceCustomerPONumber').text(customerPONumber);
+                            alert('Customer PO Number updated!');
+                        })
+                        @*.done(function(data){
+
+                        var redirectUrl='@Url.Action("Details",new{id=@Model.WorkOrderDetail.Id})';
+                        window.location=redirectUrl;
+                    })*@
+                        ;
+                }
+            });
+
+            //*********************INVOICE***********************************************
+
+            $("#btnAddCustomerPayment").on("click",function(){
+                var newPayment={
+                    "workOrderId":@Model.WorkOrderDetail.Id,
+                    "paymentTypeId":$("#ddlPaymentOptions").val(),
+                    "amount": $("#txtCustomerPaymentAmount").val(),
+                    "receiptNumber":$("#txtCustomerPaymentReceiptNumber").val()
+                };
+
+                $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("AddCustomerPayment")',
+                        data: JSON.stringify(newPayment),
+                        contentType: "application/json;"
+                    })
+                    .done(function(data){
+                        $('#tbodyCustomerPayments').append("<tr><td>"+new Date()+"</td><td>"+$("#txtCustomerPaymentAmount").val()+"</td><td>"+$("#ddlPaymentOptions").val()+"</td><td>"+$("#txtCustomerPaymentReceiptNumber").val()+"</td></tr>");
+                        location.reload();
+
+                    });
+            });
+
+            $(".btnDisplayAddTask").click(function(){
+                $(".divAddTask").show();
+            });
+            $(".btnCancelAddTask").click(function(){
+                $(".divAddTask").hide();
+            });
+            $("#btnAddTask").click(function(){
+                var newTask={
+                    "workOrderId":@Model.WorkOrderDetail.Id,
+                    "employeeId":$("#ddlEmployee").val(),
+                    "description":$("#txtDescription").val(),
+                    "targetDate": $("#targetDate").val(),
+                    "workOrderItemId":$('input[name=itemsList]:checked').val()
+                };
+                $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("CreateTask")',
+                        data: JSON.stringify(newTask),
+                        contentType: "application/json;",
+                    })
+                    .done(function(data){
+                        if(data===true){
+                        $("#alertTaskSuccess").fadeIn(function () {
+                            $(this).html("Task added successfully!")
+                            .fadeOut(3600);
+                        });
+                        $("#ddlEmployee").val(0);
+                        $("#txtDescription").val('');
+                        $("#targetDate").val('');
+                            $(".divAddTask").hide();
+                            //$('input[name=itemsList]:checked').val('');
+                        getTasks();
+                        }
+                        else alert("Error creating Task");
+
+                    })
+                    ;
+
+                console.log('New Task: ' + JSON.stringify(newTask));
+
+                //$(".divAddTask").hide();
+            });
+
+            $("#divTasksList").on("click", ".btnViewTaskDetails", function(event){
+                var taskId=$(this).data("id");
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetTaskDetails","WorkOrder")'+'/'+taskId
+                })
+                .done(function(data){
+                    // show the response
+                    if(data)
+                    {
+                        $("#divTaskDetails").html(data).fadeIn(4000,'linear');
+
+
+
+                        $("#divTaskDetails").on("click", "#datetimepicker1", function(event){
+                            $("#divTaskDetails").on("datetimepicker", "#datetimepicker1", function(event){
+                                format: 'MM/DD/YYYY hh:mm:ss'
+                            });
+
+                        });
+                    }
+                });
+            });
+            function isValidDate(dateString)  {
+
+                return moment(dateString,'MM/DD/YYYY hh:mm').isValid();
+            };
+            $("#divTaskDetails").on("click", "#btnUpdateTask", function(event){
+
+
+
+                var taskId=$(this).data("id");
+                var task={
+                    "id":taskId,
+                    "statusId":$("#ddlTaskStatus").val(),
+                    "progress":$("#txtTaskProgress").val()
+                };
+                $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("UpdateTask")',
+                        data: JSON.stringify(task),
+                        contentType: "application/json;"
+                })
+                .done(function(data){
+                    // show the response
+                    if(data)
+                    {
+                        $("#divTaskDetails").fadeOut('4000','linear');
+                        $("#alertTaskSuccess").html("Task updated successfully!")
+                        $("#alertTaskSuccess").fadeIn(2000,'linear',function () {
+                            $(this).fadeOut(4000,'linear');
+                        });
+                        getTasks();
+                    }
+                });
+            });
+
+
+
+            var currentDateTime = new Date();
+
+
+            $("#divTaskDetails").on("click", "#btnEndTask", function(event){
+                var DD=$("#DD").val();
+                var MM=$("#MM").val();
+                var YYYY=$("#YYYY").val();
+                var hh=$("#hh").val();
+                var mm=$("#mm").val();
+                if(DD.length===1)DD="0"+DD;
+                if(MM.length===1)MM="0"+MM;
+                if(hh.length===1)hh="0"+hh;
+                if(mm.length===1)mm="0"+mm;
+                //var completedDate=DD+"/"+MM+"/"+YYYY+" "+hh+":"+mm+":00";
+                var completedDate = MM + "/" + DD + "/" + YYYY + " " + hh + ":" + mm + ":00";
+
+                var dateValid=isValidDate(completedDate);
+
+                if(dateValid)
+                {
+                    var taskId=$(this).data("id");
+                    var task={
+                        "taskId":taskId,
+                        "timestamp":completedDate
+                    };
+                    $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("EndTask")',
+                            data: JSON.stringify(task),
+                            contentType: "application/json;"
+                    })
+                    .done(function(data){
+                        // show the response
+                        if(data)
+                        {
+                            $("#divTaskDetails").fadeOut('4000','linear');
+                            $("#alertTaskSuccess").html("Task updated successfully!")
+                            $("#alertTaskSuccess").fadeIn(2000,'linear',function () {
+                                $(this).fadeOut(4000,'linear');
+                            });
+                            getTasks();
+                        }
+                    });
+                }
+                else{
+                    $("#alertTaskErrorMessage").fadeIn(function () {
+                            $(this).html("Invalid Date-Time!")
+                            .fadeOut(3600);
+                        });
+                }
+
+
+            });
+
+            $("#divTaskDetails").on("click", "#btnCancelUpdateTask", function(event){
+                $("#divTaskDetails").fadeOut(1000,'linear');
+            });
+
+            $("#btnAddMaterialUsage").on("click", function () {
+                if ($("#selectedMaterial").val()) {
+
+                    var newMaterialUsed = {
+                        "workOrderId":@Model.WorkOrderDetail.Id,
+                        "materialId": $("#selectedMaterial").val(),
+                        "units": $("#txtUnits").val()
+                    };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("AddMaterialUsed")',
+                        data: JSON.stringify(newMaterialUsed),
+                        contentType: "application/json;"
+                    })
+                        .done(function (data) {
+                            $('#tbodyMaterialsUse').append("<tr><td>" + $("#selectedMaterialName").val() + "</td><td>" + newMaterialUsed.units + "</td></tr>");
+                            $("#txtUnits").val('');
+                            $("#autocomplete").val('');
+                            $('.tableMaterialsUse').show();
+                            $("#selectedMaterial").val("");
+                            $("#selectedMaterialName").val("");
+                            $("#divAddMaterialsErrorMessage").html('');
+                        });
+                }
+                else {
+                    $("#divAddMaterialsErrorMessage").html('<p class="alert alert-danger">Select Material !</p>');
+                }
+
+            });
+
+            $("#btnCreateWorkOrder").on("click",function(){
+                updateWorkOrderStatus(@Convert.ToByte(WorkOrderStatus.Created));
+            });
+
+            $("#btnCompleteWorkOrder").on("click",function(){
+                updateWorkOrderStatus(@Convert.ToByte(WorkOrderStatus.Completed));
+            });
+
+            function updateWorkOrderStatus(statusId)
+            {
+                var totalTasks=$('.taskRow').length;
+                var completedTasks=$('.bg-Completed').length;
+                var updateWO={
+                    "WorkOrderId":@Model.WorkOrderDetail.Id,
+                    "Status":statusId
+                };
+
+                if(totalTasks===completedTasks)
+                {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("UpdateStatus")',
+                        data: JSON.stringify(updateWO),
+                        contentType: "application/json;"
+                    })
+                    .done(function(data){
+
+                        var redirectUrl='@Url.Action("Details",new{id=@Model.WorkOrderDetail.Id})';
+                        window.location=redirectUrl;
+                    });
+                }
+                else{
+                    $("#alertWOErrorMessage").fadeIn(function () {
+                            $(this).html("All Tasks have to be completed!")
+                            .fadeOut(3600);
+                        });
+                }
+            }
+
+            function getEvents() {
+            
+            let url = '@Url.Action("GetEvents","WorkOrder")' + '/' +@Model.WorkOrderDetail.Id;
+            console.log('Attempting to get events! '+url);
+            $.ajax({
+                    type: 'GET',
+                    url: url
+                })
+                .done(function (data) {
+                    // show the response
+                    console.log('events data'+JSON.stringify(data));
+                    $.each(data, function (index, value) {
+                            console.log('Events: ' + JSON.stringify(value));
+                            $('.tbodyEvents').append("<tr><td>" + value.eventType + "</td><td>" + value.timestamp +  "</td><td>" + value.addedBy + "</td></tr>");
+                            
+                        });
+                });
+        }
+
+        });
+    </script>
+}
+

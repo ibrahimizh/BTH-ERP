@@ -1,0 +1,174 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Payment Report";
+}
+    
+
+    <form autocomplete="off">
+        <div class="card">
+            <div class="card-header bg-primary text-white"><h6 class="card-title">Customer Payments - Report</h6></div>
+            <div class="card-body">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h6>Filter</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-bordered">
+                                    <tbody>
+
+                                        <tr>
+                                            <td class="bg-light"><label>Customer Name</label></td>
+                                            <td><input type="text" class="form-control" id="txtCustomerName" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-light"><label>Contact Name</label></td>
+                                            <td><input type="text" class="form-control" id="txtContactName" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-light"><label>Paid On</label></td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <div class='input-group'>
+                                                        <input type='text' class="form-control datepicker" id="dtCreatedOn" />
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-light"><label>Payments From</label></td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <div class='input-group'>
+                                                        <input type='text' class="form-control datepicker" id="dtCreatedFrom" />
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-light"><label>Payments To</label></td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <div class='input-group'>
+                                                        <input type='text' class="form-control datepicker" id="dtCreatedTo" />
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-footer">
+                        <input id="btnSearch" type="button" class="btn btn-success" value="Search" />
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <div class="card">
+                    <div class="card-header bg-success text-white"><h6 class="card-title">Results</h6></div>
+                    <div class="card-body">
+
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="reportSummary col-md-4"></div>
+                            </div>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr class="bg-info text-white">
+
+                                        <th>
+                                            Date
+                                        </th>
+                                        <th>
+                                            Receipt No
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            Contact Person
+                                        </th>
+                                        <th>
+                                            Payment Type
+                                        </th>
+                                        <th>
+                                            Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="tbodyReport">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </form>
+
+
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#btnSearch').click(function () {
+                let customerName = $('#txtCustomerName').val();
+                let contactName = $('#txtContactName').val();
+                let dtCreatedOn = $('#dtCreatedOn').val();
+                let dtCreatedFrom = $('#dtCreatedFrom').val();
+                let dtCreatedTo = $('#dtCreatedTo').val();
+                let mobileNo = $('#txtMobile').val();
+
+                let searchModel = {
+                    "CustomerName": customerName,
+                    "ContactName": contactName,
+                    "Date":dtCreatedOn,
+                    "DateFrom": dtCreatedFrom,
+                    "DateTo": dtCreatedTo,
+                    "mobileNo":mobileNo
+                };
+                console.log("Search Model: " + JSON.stringify(searchModel));
+                $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("GetFilteredPaymentReport")',
+                        data: JSON.stringify(searchModel),
+                        contentType: "application/json;"
+                    })
+                        .done(function (data) {
+                            console.log(JSON.stringify(data));
+                            $('.tbodyReport').html('');
+                            $('.reportSummary').html('');
+                            for (i = 0; i < data.reportData.length; i++) {
+                                $('.tbodyReport').append("<tr><td>" + reviver(data.reportData[i].dateString) + "</td><td>" + data.reportData[i].receiptNumber + "</td><td>" + data.reportData[i].customerName + "</td><td>" + data.reportData[i].contactDisplayName + "</td><td>" + data.reportData[i].paymentType + "</td><td>" + data.reportData[i].amount + "</td></tr>");
+                            }
+                            $('.reportSummary').html("<h6>Summary</h6><table class='table table-borderless'><tr><td class='bg-light'>Cash</td><td>"+data.cashTotal+"</td></tr><tr><td class='bg-light'>Bank Transfer</td><td>"+data.bankTransferTotal+"</td></tr><tr><td class='bg-light'>Cheque</td><td>"+data.chequeTotal+"</td></tr><tr><td class='bg-light'>Point Of Sale</td><td>"+data.pointOfSaleTotal+"</td></tr></table>");
+                        });
+            });
+
+            const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+
+            function reviver(value) {
+              if (typeof value === "string" && dateFormat.test(value)) {
+                return new Date(value);
+              }
+              return value;
+            }
+
+        });
+    </script>
+}

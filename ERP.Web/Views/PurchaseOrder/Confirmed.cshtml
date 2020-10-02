@@ -1,0 +1,240 @@
+@model PurchaseOrderDetailedView
+
+<div class="card card-default">
+    <div class="card-header">
+        Purchase Order Details
+
+
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Supplier</th>
+                    <th>Created On</th>
+                    <th>Ordered On</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.Id</td>
+                    <td>@Model.SupplierName</td>
+                    <td>@Model.CreatedDate</td>
+                    <td>@Model.OrderedDate</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col-md-2">
+                <button class="btn btn-success" id="btnReceivePO" type="button">Receive</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-default confirmPO hide" id="btnCancelReceivePO">Cancel</button>
+            </div>
+        </div>
+        <div class="row"><div class="col-md">&nbsp;</div></div>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-check confirmPO hide">
+                    <input asp-for="@Model.PartiallyReceived" class="form-check-input  confirmPO hide" type="checkbox" id="chkPartiallyReceived">
+                    <label class="form-check-label" for="defaultCheck1">
+                        Items Partially Received
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="card card-default">
+
+    <div class="card-header">
+        <h3>Items</h3>
+    </div>
+    <div class="card-body">
+
+        <table class="table table-bordered tablePOItems">
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Ordered Quantity</th>
+                    <th class="confirmPO hide">Received Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model.Items)
+                {
+                    <tr class="trReceiveItems">
+                        <td>
+                            <span>@item.MaterialName</span>
+                            <input type="hidden" id="itemId" value="@item.Id" />
+                            <input type="hidden" id="materialId" value="@item.MaterialId" />
+                        </td>
+                        <td class="tdOrderedQuantity">@item.OrderedQuantity</td>
+                        <td class="confirmPO hide tdReceivedQuantity">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input name="txtReceivedItems" class="form-control txtReceivedItems" asp-for="@item.ReceivedQuantity" disabled="disabled" max="@item.OrderedQuantity" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="confirmPO hide">
+
+            <div class="row">
+                <div class="col-md-2">Date/Time</div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <div class="input-group date datetimepicker2" id="datetimepicker1" data-target-input="nearest">
+                            <input type="text" id="receiveDate" name="receiveDate" class="form-control datetimepicker-input" data-target="#datetimepicker1" />
+                            <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">Total Amount</div>
+                <div class="col-md-2">
+                    <input class="form-control" asp-for="@Model.TotalAmount" id="txtTotalAmount" required min="1" type="number" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">Invoice Number</div>
+                <div class="col-md-2">
+                    <input class="form-control" asp-for="@Model.InvoiceNumber" id="txtInvoiceNumber" required min="1" type="text" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <button class="btn btn-success" id="btnConfirmReceive">Confirm Receive</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row"><p>&nbsp;</p></div>
+<div class="row">
+    <div class="col-md-6">
+        <table class="table table-bordered">
+            <thead>
+                <tr class="bg-light">
+                    <th>Event Type</th>
+                    <th>Date/Time</th>
+                    <th>Added By</th>
+                </tr>
+            </thead>
+            <tbody class="tbodyEvents"></tbody>
+        </table>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            getEvents();
+        $("#btnReceivePO").click(function(){
+            $(".confirmPO").removeClass("hide").addClass("show");
+        });
+
+        $("#chkPartiallyReceived").click(function(){
+            if($("#chkPartiallyReceived"). prop("checked") == true)
+            {
+                $('.txtReceivedItems').prop("disabled", false);
+            }
+            else{
+                $('.txtReceivedItems').prop("disabled", true);
+            }
+        });
+
+        $("#btnConfirmReceive").click(function(e){
+            e.preventDefault();
+            var total = $("#txtTotalAmount").val();
+            var invoiceNumber = $("#txtInvoiceNumber").val();
+            var receivedDate = $("#receiveDate").val();
+            if ($.trim(invoiceNumber).length === 0) alert('Enter Invoice Number!');
+            else {
+                if(total)
+            {
+                if(parseFloat(total)<0.1)
+                {
+                    alert("Enter valid Amount!");
+                }
+                else{
+                    var isPartiallyReceived=$("#chkPartiallyReceived"). prop("checked");
+                    var purchaseOrderReceived={
+                        id:@Model.Id,
+                        partiallyReceived:isPartiallyReceived,
+                        totalAmount: total,
+                        invoiceNumber: invoiceNumber,
+                        receivedDate:receivedDate,
+                        items:[]
+                    };
+
+                    $('.trReceiveItems').each(function () {
+                            var item = $(this); //this should represent one row
+                            var itemId=item.find('input:hidden[id=itemId]').val();
+                            var materialId=item.find('input:hidden[id=materialId]').val();
+                            var receivedItemQuantity=0;
+                            if(isPartiallyReceived)
+                            {
+                                receivedItemQuantity= item.find('input[name=txtReceivedItems]').val();
+                            }
+                            else{
+                                receivedItemQuantity = item.find('.tdOrderedQuantity').text();
+                            }
+                            purchaseOrderReceived.items.push({id:itemId,receivedQuantity:receivedItemQuantity,materialId:materialId});
+
+                    });
+
+                    var redirectUrl='@Url.Action("Received",new{id=@Model.Id})';
+                    console.log("Model: "+JSON.stringify(purchaseOrderReceived));
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("Receive")',
+                        data: JSON.stringify(purchaseOrderReceived),
+                        contentType: "application/json;",
+                    })
+                    .done(function(data){
+                        alert("Success: Purchase Order updated!");
+                        window.location=redirectUrl;
+                    })
+                    .fail(function ( jqXHR, textStatus, errorThrown ) {
+                        alert("Error updating Purchase Order!");
+                    });
+                }
+            }
+            else{
+                alert("Enter Total Amount!");
+            }
+            }
+
+
+        });
+
+        function getEvents() {
+            
+            let url = '@Url.Action("GetEvents","PurchaseOrder")' + '/' +@Model.Id;
+            console.log('Attempting to get events! '+url);
+            $.ajax({
+                    type: 'GET',
+                    url: url
+                })
+                .done(function (data) {
+                    // show the response
+                    console.log('events data'+JSON.stringify(data));
+                    $.each(data, function (index, value) {
+                            console.log('Events: ' + JSON.stringify(value));
+                            $('.tbodyEvents').append("<tr><td>" + value.eventType + "</td><td>" + value.timestamp +  "</td><td>" + value.addedBy + "</td></tr>");
+                            
+                        });
+                });
+        }
+    });
+    </script>
+}

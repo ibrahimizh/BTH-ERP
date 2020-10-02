@@ -1,0 +1,132 @@
+﻿@model IEnumerable<WorkOrderTaskView>
+<div class="container-fluid" style="font-size: 14px !important;">
+    <div class="card">
+        <div class="card-body">
+            <form autocomplete="off">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Filter by</th>
+                            <th>Equal to</th>
+                            <th>Greater than</th>
+                            <th>Less than</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><label>Work Order No</label></td>
+                            <td><input type="text" class="form-control" id="txtWorkOrderNo" /></td>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td><label>Employee </label></td>
+                            <td>
+                                <div class="form-group">
+                                    <select id="ddlEmployees" class="form-control">
+                                        <option value="0"> -- Select -- </option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td><label>Target Date</label></td>
+                            <td>&nbsp;</td>
+                            <td>
+                                <div class="form-group">
+                                    <div class='input-group'>
+                                        <input type='text' class="form-control datepicker" id="dtTargetDateFrom" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <div class='input-group'>
+                                        <input type='text' class="form-control datepicker" id="dtTargetDateTo" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-md-2"><input id="btnSearch" type="button" class="btn btn-success" value="Search" /></div>
+                    <div class="col-md-2"><input id="btnClear" type="button" class="btn btn-primary" value="Clear Filter" /></div>
+
+                </div>
+            </form>
+                </div>
+            </div>
+            <div id="taskReportData"></div>
+        </div>
+
+
+        @section Scripts{
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    bindEmployeesDropdown();
+                    function bindEmployeesDropdown() {
+                        $.ajax({
+                            type: 'GET',
+                            url: '@Url.Action("GetEmployeeDropdown","Employee")'
+                        })
+                            .done(function (data) {
+                                $.each(data, function (index, value) {
+                                    $("#ddlEmployees").append("<option value='" + value.value + "'>" + value.text + "</option>");
+                                });
+
+                            });
+                    }
+
+                    $('#btnSearch').click(function () {
+                        let workOrderId=$('#txtWorkOrderNo').val();
+                        let employeeId = $('#ddlEmployees').val();
+                        let targetDateFrom = $('#dtTargetDateFrom').val();
+                        let targetDateTo = $('#dtTargetDateTo').val();
+
+                        let searchModel = {
+                            "WorkOrderId":workOrderId,
+                            "EmployeeId":employeeId,
+                            "TargetDateFrom": targetDateFrom,
+                            "TargetDateTo": targetDateTo
+                        };
+                        $.ajax({
+                                type: 'POST',
+                                url: '@Url.Action("GetFilteredTaskReport")',
+                                data: JSON.stringify(searchModel),
+                                contentType: "application/json;"
+                            })
+                                .done(function (data) {
+                                    $("#taskReportData").html(data);
+                                });
+                    });
+
+                    $('#btnClear').click(function () {
+                        $('#txtWorkOrderNo').val('');
+                        $('#ddlEmployees').val(0);
+                        $('#dtTargetDateFrom').val('');
+                        $('#dtTargetDateTo').val('');
+                    });
+
+                    const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+
+                    function reviver(key, value) {
+                      if (typeof value === "string" && dateFormat.test(value)) {
+                        return new Date(value);
+                      }
+
+                      return value;
+                    }
+
+                });
+            </script>
+        }
+
+
+

@@ -1,0 +1,266 @@
+@model PurchaseOrderDetailedView
+
+<div class="card card-default">
+    <div class="card-header bg-success text-white">
+        Received Purchase Order Details
+
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Supplier</th>
+                    <th>Invoice Number</th>
+                    <th>Created On</th>
+                    <th>Ordered On</th>
+                    <th>Received On</th>
+                    <th>Total Amount</th>
+                    <th>Paid Amount</th>
+                    <th>Balance Amount</th>
+                    <th>Fully Received</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.Id</td>
+                    <td>@Model.SupplierName</td>
+                    <td>@Model.InvoiceNumber</td>
+                    <td>@Model.CreatedDate</td>
+                    <td>@Model.OrderedDate</td>
+                    <td>@Model.ReceivedDate</td>
+                    <td>@Model.TotalAmount</td>
+                    <td>@Model.PaidAmount</td>
+                    <td>@(Model.TotalAmount-Model.PaidAmount)</td>
+                    <td>
+                        @if (Model.StatusId == 5)
+                        {
+                            <input type="checkbox" class="form-control" checked="checked" readonly="readonly" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" class="form-control" readonly="readonly" />
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="row"><div class="col-md">&nbsp;</div></div>
+
+    </div>
+</div>
+<p>&nbsp;</p>
+<div class="card card-default">
+
+    <div class="card-header bg-success text-white">
+        Items
+    </div>
+    <div class="card-body">
+
+        <table class="table table-bordered tablePOItems">
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Ordered Quantity</th>
+                    <th>Received Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model.Items)
+                {
+                    <tr class="trReceiveItems">
+                        <td>
+                            <span>@item.MaterialName</span>
+                            <input type="hidden" id="itemId" value="@item.Id" />
+                            <input type="hidden" id="materialId" value="@item.MaterialId" />
+                        </td>
+                        <td class="tdOrderedQuantity">@item.OrderedQuantity</td>
+                        <td class="tdOrderedQuantity">@item.ReceivedQuantity</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<p>&nbsp;</p>
+<div class="card card-default">
+
+    <div class="card-header bg-success text-white">
+        Payments to Supplier
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-default bg-light divAddSupplierPayment">
+                    <div class="card-header">Add New payment</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Payment Menthod</label>
+                            <select id="ddlPaymentOptions" class="form-control">
+                                <option value='1'>Cash</option>
+                                <option value='2'>Cheque</option>
+                                <option value='3'>BankTransfer</option>
+                                <option value='4'>PointOfSale</option>
+                            </select>
+
+                        </div>
+                        <div class="form-group">
+                            <label>Enter Amount</label>
+                            <input type="text" class="form-control txtAddAmount" maxlength="10" />
+                        </div>
+                        <div class="form-group">
+                            <label>Date/Time</label>
+                            <div class="form-group">
+                                <div class="input-group date datetimepicker2" id="datetimepicker1" data-target-input="nearest">
+                                    <input type="text" id="paidDate" name="paidDate" class="form-control datetimepicker-input" data-target="#datetimepicker1" />
+                                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <input type="button" class="btn btn-success btnAddPayment" value="Save" />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row"><p>&nbsp;</p></div>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr class="bg-light">
+                            <th>Date/Time</th>
+                            <th>Amount Paid</th>
+                            <th>Payment Type</th>
+                            <th>Added By</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbodySupplierPayments"></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row"><p>&nbsp;</p></div>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr class="bg-light">
+                            <th>Event Type</th>
+                            <th>Date/Time</th>
+                            <th>Added By</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbodyEvents"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+    $(document).ready(function () {
+        getPayments();
+        getEvents();
+        function getPayments() {
+            
+            let url = '@Url.Action("GetSupplierPayments","PurchaseOrder")' + '/' +@Model.Id;
+            console.log('Attempting to get payments! '+url);
+            $.ajax({
+                    type: 'GET',
+                    url: url
+                })
+                .done(function (data) {
+                    // show the response
+                    console.log('payments data'+JSON.stringify(data));
+                    populatePayments(data);
+                });
+        }
+
+        function populatePayments(data) {
+            $('.tbodySupplierPayments').html('');
+            if (data) {
+                        $.each(data, function (index, value) {
+                            console.log('Payments: ' + JSON.stringify(value));
+                            $('.tbodySupplierPayments').append("<tr><td>" + value.timestamp + "</td><td>" + value.amount +  "</td><td>" + getPaymentType(value.paymentTypeId) + "</td><td>" + value.addedBy + "</td></tr>");
+                            
+                        });
+                    }
+                    //if (data.length === 0) {
+                    //    console.log('no payments');
+                    //    $('.tableCustomerPayments').hide();
+                    //}
+        }
+
+        $(".btnAddPayment").click(function () {
+            let newPayment = {
+                PurchaseOrderId:@Model.Id,
+                Amount: $(".txtAddAmount").val(),
+                PaymentTypeId: $("#ddlPaymentOptions").val(),
+                Timestamp:$("#paidDate").val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("AddSupplierPayment")',
+                data: JSON.stringify(newPayment),
+                contentType: "application/json;"
+            })
+                .done(function (data) {
+                    // show the response
+                    if (data) {
+                        //getPayments();
+                        location.reload();
+                    }
+                });
+        });
+
+        function getPaymentType(paymentTypeId) {
+            let paymentType = '';
+            switch (paymentTypeId) {
+                case 1:
+                    paymentType = 'Cash';
+                    break;
+                case 2:
+                    paymentType = 'Cheque';
+                    break;
+                case 3:
+                    paymentType = 'Bank Transfer';
+                    break;
+                case 4:
+                    paymentType = 'Point of Sale';
+                    break;
+            }
+            return paymentType;
+        }
+
+        function getEvents() {
+            
+            let url = '@Url.Action("GetEvents","PurchaseOrder")' + '/' +@Model.Id;
+            console.log('Attempting to get events! '+url);
+            $.ajax({
+                    type: 'GET',
+                    url: url
+                })
+                .done(function (data) {
+                    // show the response
+                    console.log('events data'+JSON.stringify(data));
+                    $.each(data, function (index, value) {
+                            console.log('Events: ' + JSON.stringify(value));
+                            $('.tbodyEvents').append("<tr><td>" + value.eventType + "</td><td>" + value.timestamp +  "</td><td>" + value.addedBy + "</td></tr>");
+                            
+                        });
+                });
+        }
+
+    });
+    </script>
+}
